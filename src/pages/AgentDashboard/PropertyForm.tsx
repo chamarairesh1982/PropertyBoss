@@ -37,6 +37,8 @@ export default function PropertyForm() {
     tenure: 'freehold',
     amenities: '', // comma separated string
   });
+  const [floorPlan, setFloorPlan] = useState<File | null>(null);
+  const [video, setVideo] = useState<File | null>(null);
 
   // Load existing property if editing
   useEffect(() => {
@@ -95,6 +97,34 @@ export default function PropertyForm() {
     }));
   }
 
+  async function uploadMedia(propertyId: string) {
+    const bucket = supabase.storage.from('property-media');
+    if (floorPlan) {
+      const path = `${propertyId}/floor-${Date.now()}-${floorPlan.name}`;
+      const { error } = await bucket.upload(path, floorPlan);
+      if (!error) {
+        const url = bucket.getPublicUrl(path).data.publicUrl;
+        await supabase.from('property_media').insert({
+          property_id: propertyId,
+          url,
+          type: 'floor_plan',
+        });
+      }
+    }
+    if (video) {
+      const path = `${propertyId}/video-${Date.now()}-${video.name}`;
+      const { error } = await bucket.upload(path, video);
+      if (!error) {
+        const url = bucket.getPublicUrl(path).data.publicUrl;
+        await supabase.from('property_media').insert({
+          property_id: propertyId,
+          url,
+          type: 'video',
+        });
+      }
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -110,25 +140,34 @@ export default function PropertyForm() {
       const { error } = await supabase
         .from('properties')
         .update(payload)
-        .eq('id', id);
-      setLoading(false);
+        .eq('id', id)
+        .select('id')
+        .single();
       if (error) {
+        setLoading(false);
         setError(error.message);
-      } else {
-        navigate('/agent');
+        return;
       }
+      await uploadMedia(id);
+      setLoading(false);
+      navigate('/agent');
     } else {
-      // Create new property; assign the current user's ID as agent_id
-      const { error } = await supabase.from('properties').insert({
-        ...payload,
-        agent_id: user.id,
-      });
-      setLoading(false);
-      if (error) {
-        setError(error.message);
-      } else {
-        navigate('/agent');
+      const { data, error } = await supabase
+        .from('properties')
+        .insert({
+          ...payload,
+          agent_id: user.id,
+        })
+        .select('id')
+        .single();
+      if (error || !data) {
+        setLoading(false);
+        setError(error?.message || 'Failed to create');
+        return;
       }
+      await uploadMedia(data.id);
+      setLoading(false);
+      navigate('/agent');
     }
   }
 
@@ -357,6 +396,28 @@ export default function PropertyForm() {
             value={form.amenities}
             onChange={handleChange}
             className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700" htmlFor="floor_plan">
+            Floor plan
+          </label>
+          <input
+            type="file"
+            id="floor_plan"
+            onChange={(e) => setFloorPlan(e.target.files?.[0] || null)}
+            className="mt-1 block w-full text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700" htmlFor="video">
+            Virtual tour video
+          </label>
+          <input
+            type="file"
+            id="video"
+            onChange={(e) => setVideo(e.target.files?.[0] || null)}
+            className="mt-1 block w-full text-sm"
           />
         </div>
         <button

@@ -56,18 +56,31 @@ create table if not exists public.properties (
 );
 
 --
--- Table: property_images
+-- Table: property_media
 --
 -- Each record in this table represents an image for a property.  The images themselves
 -- should be uploaded to Supabase Storage and the resulting public URL stored here.  A
 -- unique constraint on `(property_id, url)` prevents duplicate entries.
-create table if not exists public.property_images (
+create table if not exists public.property_media (
   id uuid primary key default uuid_generate_v4(),
   property_id uuid references public.properties (id) on delete cascade,
   url text not null,
+  type text not null default 'photo' check (type in ('photo','floor_plan','video')),
   ord integer default 0,
   created_at timestamp with time zone default now(),
   unique (property_id, url)
+);
+
+--
+-- Table: price_history
+--
+-- Stores historical sale or rental prices for properties. Each record
+-- represents a price at a specific point in time.
+create table if not exists public.price_history (
+  id uuid primary key default uuid_generate_v4(),
+  property_id uuid references public.properties (id) on delete cascade,
+  price numeric not null,
+  recorded_at timestamp with time zone default now()
 );
 
 --
@@ -114,7 +127,8 @@ create table if not exists public.messages (
 -- applied.  By default, Supabase denies all access until explicit policies permit it.
 alter table public.profiles enable row level security;
 alter table public.properties enable row level security;
-alter table public.property_images enable row level security;
+alter table public.property_media enable row level security;
+alter table public.price_history enable row level security;
 alter table public.favorites enable row level security;
 alter table public.messages enable row level security;
 alter table public.saved_searches enable row level security;
@@ -174,7 +188,7 @@ with check (
   )
 );
 
--- Agents can delete their own properties.  Deletion of records cascades to property_images
+-- Agents can delete their own properties.  Deletion of records cascades to property_media
 -- and favorites via foreign key constraints.
 create policy "Agents can delete their own properties" on public.properties
 for delete
@@ -185,29 +199,45 @@ using (
 );
 
 --
--- RLS Policies for property_images
+-- RLS Policies for property_media
 --
 -- Anyone can view images.
-create policy "Public can view property images" on public.property_images
+create policy "Public can view property images" on public.property_media
 for select
 using (true);
 
 -- Agents can insert images for properties they own.  The with check verifies that the
 -- property referenced belongs to the authenticated user.
-create policy "Agents can add images to their properties" on public.property_images
+create policy "Agents can add images to their properties" on public.property_media
 for insert
 with check (
   exists (
-    select 1 from public.properties pr where pr.id = property_images.property_id and pr.agent_id = auth.uid()
+    select 1 from public.properties pr where pr.id = property_media.property_id and pr.agent_id = auth.uid()
   )
 );
 
 -- Agents can delete images for their own properties.
-create policy "Agents can delete images for their properties" on public.property_images
+create policy "Agents can delete images for their properties" on public.property_media
 for delete
 using (
   exists (
-    select 1 from public.properties pr where pr.id = property_images.property_id and pr.agent_id = auth.uid()
+    select 1 from public.properties pr where pr.id = property_media.property_id and pr.agent_id = auth.uid()
+  )
+);
+
+--
+-- RLS Policies for price_history
+--
+-- Anyone can view price history. Agents may insert records for properties they own.
+create policy "Public can view price history" on public.price_history
+for select
+using (true);
+
+create policy "Agents can record price history" on public.price_history
+for insert
+with check (
+  exists (
+    select 1 from public.properties pr where pr.id = price_history.property_id and pr.agent_id = auth.uid()
   )
 );
 
@@ -268,22 +298,22 @@ as $$
 begin
   update public.properties
   set has_photo = exists (
-    select 1 from public.property_images where property_id = new.property_id
+    select 1 from public.property_media where property_id = new.property_id and type = 'photo'
   )
   where id = new.property_id;
   return new;
 end;
 $$;
 
-drop trigger if exists property_image_after_insert on public.property_images;
+drop trigger if exists property_image_after_insert on public.property_media;
 create trigger property_image_after_insert
-after insert on public.property_images
+after insert on public.property_media
 for each row
 execute procedure public.update_property_has_photo();
 
-drop trigger if exists property_image_after_delete on public.property_images;
+drop trigger if exists property_image_after_delete on public.property_media;
 create trigger property_image_after_delete
-after delete on public.property_images
+after delete on public.property_media
 for each row
 execute procedure public.update_property_has_photo();
 
@@ -301,7 +331,12 @@ values
   ('11111111-2222-4333-8444-555555555555', 'Spacious Family Home', 'A bright and spacious detached house with a large garden.', 750000, 4, 2, 'house', 'sale', 51.3761, -0.1318, '123 Sutton Road', 'Sutton', 'SM1 2AB', 150.0, 'C', 10, 'freehold', ARRAY['garden','garage','driveway'], '00000000-0000-4000-8000-000000000001', now()),
   ('22222222-3333-4444-8555-666666666666', 'Modern Flat in City Centre', 'A modern two‑bed flat close to transport links.', 1850, 2, 1, 'apartment', 'rent', 51.5155, -0.1426, '45 City Street', 'London', 'W1D 3JL', 60.0, 'B', 2, 'leasehold', ARRAY['balcony','lift'], '00000000-0000-4000-8000-000000000001', now());
 
-insert into public.property_images (id, property_id, url, ord)
+insert into public.property_media (id, property_id, url, type, ord)
 values
-  (uuid_generate_v4(), '11111111-2222-4333-8444-555555555555', 'https://images.unsplash.com/photo-1560185127-6ef63e15c150?auto=format&fit=crop&w=1024&q=80', 0),
-  (uuid_generate_v4(), '22222222-3333-4444-8555-666666666666', 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1024&q=80', 0);
+  (uuid_generate_v4(), '11111111-2222-4333-8444-555555555555', 'https://images.unsplash.com/photo-1560185127-6ef63e15c150?auto=format&fit=crop&w=1024&q=80', 'photo', 0),
+  (uuid_generate_v4(), '22222222-3333-4444-8555-666666666666', 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1024&q=80', 'photo',0);
+
+insert into public.price_history (property_id, price, recorded_at)
+values
+  ('11111111-2222-4333-8444-555555555555', 720000, now() - interval '1 year'),
+  ('11111111-2222-4333-8444-555555555555', 750000, now());

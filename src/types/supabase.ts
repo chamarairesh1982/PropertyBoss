@@ -135,11 +135,12 @@ export interface Database {
           },
         ];
       };
-      property_images: {
+      property_media: {
         Row: {
           id: string;
           property_id: string | null;
           url: string;
+          type: string;
           ord: number | null;
           created_at: string | null;
         };
@@ -147,6 +148,7 @@ export interface Database {
           id?: string;
           property_id: string;
           url: string;
+          type?: string;
           ord?: number | null;
           created_at?: string | null;
         };
@@ -154,12 +156,41 @@ export interface Database {
           id?: string;
           property_id?: string;
           url?: string;
+          type?: string;
           ord?: number | null;
           created_at?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: 'property_images_property_id_fkey';
+            foreignKeyName: 'property_media_property_id_fkey';
+            columns: ['property_id'];
+            referencedRelation: 'properties';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      price_history: {
+        Row: {
+          id: string;
+          property_id: string | null;
+          price: number;
+          recorded_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          property_id: string;
+          price: number;
+          recorded_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          property_id?: string;
+          price?: number;
+          recorded_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'price_history_property_id_fkey';
             columns: ['property_id'];
             referencedRelation: 'properties';
             referencedColumns: ['id'];

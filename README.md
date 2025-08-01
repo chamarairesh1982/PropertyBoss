@@ -40,12 +40,24 @@ This project is a property listings portal inspired by popular real‑estate sit
 
    The `supabase/seed.sql` file contains the schema definitions, RLS policies and a small amount of seed data.  Use the Supabase SQL editor or `psql` to run this file against your project:
 
+  ```bash
+  supabase db push supabase/seed.sql
+  # or open supabase/seed.sql in the SQL editor and run it
+  ```
+
+   If you already applied the initial seed you can run `supabase/update_v2.sql`
+   to add the new tables and policies.
+
+5. **Deploy the Edge Function**
+
+   The `supabase/functions/nearby` function caches queries to OpenStreetMap for
+   nearby schools and amenities.
+
    ```bash
-   supabase db push supabase/seed.sql
-   # or open supabase/seed.sql in the SQL editor and run it
+   supabase functions deploy nearby
    ```
 
-5. **Start the development server**
+6. **Start the development server**
 
    ```bash
    npm run dev

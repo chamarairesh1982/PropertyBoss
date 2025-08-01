@@ -39,7 +39,7 @@ export function useProperties(filters: PropertyFilters) {
       let query = supabase
         .from('properties')
         .select(
-          `*, property_images!property_id(url, ord)`,
+          `*, property_media!property_id(url, type, ord)`,
         )
         .order('created_at', { ascending: false });
 
