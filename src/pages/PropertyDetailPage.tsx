@@ -7,6 +7,9 @@ import { useProperties } from '../hooks/useProperties';
 import { useNearby } from '../hooks/useNearby';
 import PropertyList from '../components/PropertyList';
 import LineChart from '../components/LineChart';
+import ReviewList from '../components/ReviewList';
+import ReviewForm from '../components/ReviewForm';
+import { useReviews } from '../hooks/useReviews';
 
 interface RouteParams {
   id: string;
@@ -63,13 +66,21 @@ export default function PropertyDetailPage() {
   const { data: similar, isLoading: loadingSimilar } = useProperties(
     property
       ? {
-        city: property.city ?? undefined,
-        propertyType: property.property_type,
-      }
+          city: property.city ?? undefined,
+          propertyType: property.property_type,
+        }
       : {},
   );
 
-  const { data: nearby } = useNearby(property?.latitude ?? null, property?.longitude ?? null);
+  const { data: nearby } = useNearby(
+    property?.latitude ?? null,
+    property?.longitude ?? null,
+  );
+  const { data: reviews } = useReviews(id ?? null);
+  const averageRating =
+    reviews && reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      : null;
 
   const [tab, setTab] = useState<'photos' | 'floor' | 'video'>('photos');
 
@@ -99,7 +110,9 @@ export default function PropertyDetailPage() {
   }
   if (error) {
     return (
-      <p className="p-4 text-red-600">Failed to load property: {error.message}</p>
+      <p className="p-4 text-red-600">
+        Failed to load property: {error.message}
+      </p>
     );
   }
   if (!property) {
@@ -110,7 +123,9 @@ export default function PropertyDetailPage() {
   const photos = media.filter((m) => m.type === 'photo');
   const floorPlans = media.filter((m) => m.type === 'floor_plan');
   const videos = media.filter((m) => m.type === 'video');
-  const pricePerSqM = property.floor_area ? property.price / property.floor_area : null;
+  const pricePerSqM = property.floor_area
+    ? property.price / property.floor_area
+    : null;
 
   return (
     <div className="max-w-5xl mx-auto p-4 space-y-8">
@@ -181,7 +196,9 @@ export default function PropertyDetailPage() {
           {property.property_type}
         </div>
         {property.floor_area && (
-          <div className="text-gray-700">Floor area: {property.floor_area} m²</div>
+          <div className="text-gray-700">
+            Floor area: {property.floor_area} m²
+          </div>
         )}
         {pricePerSqM && (
           <div className="text-gray-700">
@@ -192,7 +209,9 @@ export default function PropertyDetailPage() {
           <div className="text-gray-700">EPC rating: {property.epc_rating}</div>
         )}
         {property.property_age != null && (
-          <div className="text-gray-700">Age: {property.property_age} years</div>
+          <div className="text-gray-700">
+            Age: {property.property_age} years
+          </div>
         )}
         {property.tenure && (
           <div className="text-gray-700">Tenure: {property.tenure}</div>
@@ -229,7 +248,9 @@ export default function PropertyDetailPage() {
       )}
       {nearby && nearby.length > 0 && (
         <div>
-          <h3 className="text-lg font-semibold mb-2">Nearby schools & amenities</h3>
+          <h3 className="text-lg font-semibold mb-2">
+            Nearby schools & amenities
+          </h3>
           <ul className="list-disc list-inside text-gray-700 text-sm space-y-1">
             {nearby.map((n) => (
               <li key={n}>{n}</li>
@@ -239,40 +260,49 @@ export default function PropertyDetailPage() {
       )}
       {/* Contact form */}
       <div>
-          <h3 className="text-lg font-semibold mb-2">Contact agent</h3>
-          {user ? (
-            <form onSubmit={handleSubmit} className="space-y-2 max-w-md">
-              <textarea
-                name="message"
-                className="w-full h-32 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Write a message to the agent..."
-                required
-              />
-              <button
-                type="submit"
-                disabled={sendMessage.isLoading}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
-              >
-                {sendMessage.isLoading ? 'Sending…' : 'Send message'}
-              </button>
-              {sendMessage.isError && (
-                <p className="text-red-600 text-sm">
-                  {(sendMessage.error as Error).message}
-                </p>
-              )}
-              {sendMessage.isSuccess && (
-                <p className="text-green-700 text-sm">Message sent!</p>
-              )}
-            </form>
-          ) : (
-            <p>
-              Please{' '}
-              <Link to="/login" className="text-blue-600 underline">
-                sign in
-              </Link>{' '}
-              to contact the agent.
-            </p>
-          )}
+        <h3 className="text-lg font-semibold mb-2">Contact agent</h3>
+        {user ? (
+          <form onSubmit={handleSubmit} className="space-y-2 max-w-md">
+            <textarea
+              name="message"
+              className="w-full h-32 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Write a message to the agent..."
+              required
+            />
+            <button
+              type="submit"
+              disabled={sendMessage.isLoading}
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+            >
+              {sendMessage.isLoading ? 'Sending…' : 'Send message'}
+            </button>
+            {sendMessage.isError && (
+              <p className="text-red-600 text-sm">
+                {(sendMessage.error as Error).message}
+              </p>
+            )}
+            {sendMessage.isSuccess && (
+              <p className="text-green-700 text-sm">Message sent!</p>
+            )}
+          </form>
+        ) : (
+          <p>
+            Please{' '}
+            <Link to="/login" className="text-blue-600 underline">
+              sign in
+            </Link>{' '}
+            to contact the agent.
+          </p>
+        )}
+      </div>
+      {/* Reviews */}
+      <div>
+        <h3 className="text-lg font-semibold mb-2">
+          Reviews{' '}
+          {averageRating != null && `(avg ${averageRating.toFixed(1)}/5)`}
+        </h3>
+        <ReviewList propertyId={property.id} />
+        {user && <ReviewForm propertyId={property.id} />}
       </div>
       {/* Similar listings */}
       {similar && similar.length > 1 && (
@@ -283,7 +313,9 @@ export default function PropertyDetailPage() {
           ) : (
             <PropertyList
               // filter out the current property from the similar list
-              properties={similar.filter((p) => p.id !== property.id).slice(0, 4)}
+              properties={similar
+                .filter((p) => p.id !== property.id)
+                .slice(0, 4)}
             />
           )}
         </div>

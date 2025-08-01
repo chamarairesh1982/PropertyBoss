@@ -123,6 +123,21 @@ create table if not exists public.messages (
   created_at timestamp with time zone default now()
 );
 
+--
+-- Table: reviews
+--
+-- Stores user reviews for properties. Each review references the property
+-- being reviewed and the profile of the author. Ratings are limited to 1‑5.
+create table if not exists public.reviews (
+  id uuid primary key default uuid_generate_v4(),
+  property_id uuid references public.properties (id) on delete cascade,
+  user_id uuid references public.profiles (id) on delete cascade,
+  rating integer not null check (rating >= 1 and rating <= 5),
+  comment text,
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);
+
 -- Enable Row Level Security for every table.  RLS must be enabled before policies can be
 -- applied.  By default, Supabase denies all access until explicit policies permit it.
 alter table public.profiles enable row level security;
@@ -132,6 +147,7 @@ alter table public.price_history enable row level security;
 alter table public.favorites enable row level security;
 alter table public.messages enable row level security;
 alter table public.saved_searches enable row level security;
+alter table public.reviews enable row level security;
 
 --
 -- RLS Policies for profiles
@@ -289,6 +305,23 @@ for insert
 with check (sender_id = auth.uid());
 
 --
+-- RLS Policies for reviews
+--
+-- Anyone can read reviews. Only the author may modify or delete their review.
+create policy "Public can view reviews" on public.reviews
+for select using (true);
+
+create policy "Authenticated users can create reviews" on public.reviews
+for insert with check (user_id = auth.uid());
+
+create policy "Users can update their reviews" on public.reviews
+for update using (user_id = auth.uid())
+with check (user_id = auth.uid());
+
+create policy "Users can delete their reviews" on public.reviews
+for delete using (user_id = auth.uid());
+
+--
 -- Trigger to update properties.has_photo whenever images are added or removed.
 --
 create or replace function public.update_property_has_photo()
@@ -340,3 +373,16 @@ insert into public.price_history (property_id, price, recorded_at)
 values
   ('11111111-2222-4333-8444-555555555555', 720000, now() - interval '1 year'),
   ('11111111-2222-4333-8444-555555555555', 750000, now());
+
+insert into public.reviews (property_id, user_id, rating, comment, created_at)
+values
+  ('11111111-2222-4333-8444-555555555555',
+    '00000000-0000-4000-8000-000000000002',
+    4,
+    'Great location and spacious rooms.',
+    now() - interval '2 days'),
+  ('22222222-3333-4444-8555-666666666666',
+    '00000000-0000-4000-8000-000000000002',
+    5,
+    'Loved staying here!',
+    now() - interval '1 day');
