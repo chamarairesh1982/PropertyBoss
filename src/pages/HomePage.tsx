@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import { useLocation } from 'react-router-dom';
 import PropertyList from '../components/PropertyList';
 import PropertyFilter from '../components/PropertyFilter';
 import { useInfiniteProperties } from '../hooks/useProperties';
@@ -14,7 +15,10 @@ const PropertyMap = lazy(() => import('../components/PropertyMap'));
  * retrieve matching records from the database.
  */
 export default function HomePage() {
-  const [filters, setFilters] = useState<PropertyFilters>({});
+  const location = useLocation();
+  const [filters, setFilters] = useState<PropertyFilters>(
+    (location.state as { filters?: PropertyFilters } | null)?.filters || {},
+  );
   const {
     data,
     isLoading,
@@ -25,6 +29,11 @@ export default function HomePage() {
   } = useInfiniteProperties(filters);
   const properties = data?.pages.flat() ?? [];
   const loader = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const s = (location.state as { filters?: PropertyFilters } | null)?.filters;
+    if (s) setFilters(s);
+  }, [location.state]);
 
   useEffect(() => {
     if (!loader.current) return;

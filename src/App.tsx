@@ -9,6 +9,7 @@ import AgentDashboard from './pages/AgentDashboard/AgentDashboard';
 import FavoritesPage from './pages/FavoritesPage';
 import FavoriteListsPage from './pages/FavoriteListsPage';
 import ComparePage from './pages/ComparePage';
+import SavedSearchesPage from './pages/SavedSearchesPage';
 
 /**
  * Root component for the application.  It defines the top level layout
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="/agent/*" element={<AgentDashboard />} />
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/lists" element={<FavoriteListsPage />} />
+          <Route path="/saved-searches" element={<SavedSearchesPage />} />
           <Route path="/compare" element={<ComparePage />} />
         </Routes>
       </main>

@@ -23,7 +23,10 @@ export default function Navbar() {
           <Link to="/" className="text-xl font-semibold text-blue-600">
             Property Portal
           </Link>
-          <Link to="/" className="text-gray-700 hover:text-blue-600 hidden sm:inline">
+          <Link
+            to="/"
+            className="text-gray-700 hover:text-blue-600 hidden sm:inline"
+          >
             Browse
           </Link>
           {user && (
@@ -40,6 +43,14 @@ export default function Navbar() {
               className="text-gray-700 hover:text-blue-600 hidden sm:inline"
             >
               Lists
+            </Link>
+          )}
+          {user && (
+            <Link
+              to="/saved-searches"
+              className="text-gray-700 hover:text-blue-600 hidden sm:inline"
+            >
+              Saved Searches
             </Link>
           )}
           {user && (

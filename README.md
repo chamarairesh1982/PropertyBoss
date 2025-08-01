@@ -8,6 +8,7 @@ This project is a property listings portal inspired by popular real‑estate sit
 - **Property detail pages** with image galleries, descriptions, amenities, floor area, EPC rating and a contact form.
 - **Nearby schools and amenities** displayed on property pages using OpenStreetMap data cached via Supabase Edge Functions.
 - **Favourites**: authenticated users can save and remove favourite properties.
+- **Saved searches**: logged in users can store their search criteria and rerun them later from the Saved Searches page.
 - **Agent dashboard**: agents can create and edit their own listings, upload photos and respond to enquiries.
 - **Authentication** using Supabase’s email/password and magic‑link providers. A `profiles` table stores user roles (`user`, `agent`, `admin`).
 - **Messaging**: users can send messages to agents about a property; agents can read and reply.

@@ -7,12 +7,12 @@ export function useSavedSearches() {
   const { user } = useAuth();
   return useQuery({
     queryKey: ['saved_searches', user?.id],
-      queryFn: async () => {
-        if (!user) return [] as PropertyFilters[];
-        const { data, error } = await supabase
-          .from('saved_searches')
-          .select('*')
-          .eq('user_id', user.id);
+    queryFn: async () => {
+      if (!user) return [] as PropertyFilters[];
+      const { data, error } = await supabase
+        .from('saved_searches')
+        .select('*')
+        .eq('user_id', user.id);
       if (error) throw new Error(error.message);
       return data ?? [];
     },
@@ -29,6 +29,27 @@ export function useSaveSearch() {
       const { error } = await supabase
         .from('saved_searches')
         .insert({ user_id: user.id, criteria });
+      if (error) throw new Error(error.message);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['saved_searches'] });
+      },
+    },
+  );
+}
+
+export function useDeleteSavedSearch() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  return useMutation(
+    async (id: string) => {
+      if (!user) throw new Error('Must be signed in');
+      const { error } = await supabase
+        .from('saved_searches')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id);
       if (error) throw new Error(error.message);
     },
     {
