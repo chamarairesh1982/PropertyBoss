@@ -104,6 +104,14 @@ property-portal/
 └── package.json         # Project configuration
 ```
 
+## Security
+
+When deploying this application, configure your hosting platform to redirect all
+HTTP traffic to HTTPS. Set headers like **Strict-Transport-Security**,
+**X-Content-Type-Options**, **X-Frame-Options**, **Referrer-Policy** and an
+appropriate **Content-Security-Policy** that only allows scripts from your own
+domain and your Supabase project.
+
 ## Testing
 
 Basic end‑to‑end smoke tests can be written using **Cypress** or **Playwright**. A simple example configuration is included under the `cypress/` and `playwright.config.js` folders. Running `npm run test:e2e` will execute those tests. Refer to the respective frameworks’ documentation for more details.
