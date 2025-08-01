@@ -48,10 +48,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error || !data) {
       setUser(null);
     } else {
-      const email = session?.user?.email ?? data.email ?? '';
-      setUser({ ...data, email });
+      setUser({ ...data, email: data.email ?? '' });
     }
-  }, [session]);
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
