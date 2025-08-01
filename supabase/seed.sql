@@ -164,6 +164,18 @@ create table if not exists public.appointments (
   created_at timestamp with time zone default now()
 );
 
+--
+-- Table: nearby_cache
+--
+-- Caches results from the Overpass API for nearby schools and amenities.
+create table if not exists public.nearby_cache (
+  lat numeric not null,
+  lon numeric not null,
+  results text[] not null,
+  created_at timestamp with time zone default now(),
+  primary key (lat, lon)
+);
+
 -- Enable Row Level Security for every table.  RLS must be enabled before policies can be
 -- applied.  By default, Supabase denies all access until explicit policies permit it.
 alter table public.profiles enable row level security;
