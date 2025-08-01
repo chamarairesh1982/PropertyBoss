@@ -198,6 +198,18 @@ create table if not exists public.nearby_cache (
   primary key (lat, lon)
 );
 
+--
+-- Table: rate_limits
+--
+-- Stores counts of recent login attempts and enquiries per identifier (IP or user id).
+create table if not exists public.rate_limits (
+  identifier text not null,
+  event text not null,
+  count integer not null default 0,
+  last_request timestamp with time zone not null default now(),
+  primary key (identifier, event)
+);
+
 -- Enable Row Level Security for every table.  RLS must be enabled before policies can be
 -- applied.  By default, Supabase denies all access until explicit policies permit it.
 alter table public.profiles enable row level security;
