@@ -75,19 +75,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [loadProfile]);
 
   const signIn: AuthContextType['signIn'] = async (email, password) => {
-    const { data, error } = await supabase.functions.invoke<{
-      session?: Session;
-      error?: string;
-    }>('login', {
-      body: { email, password },
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
-    if (error || !data?.session) {
-      return { error: error?.message ?? data?.error ?? 'Login failed' };
+    if (error || !data.session) {
+      return { error: error?.message ?? 'Login failed' };
     }
-    await supabase.auth.setSession({
-      access_token: data.session.access_token,
-      refresh_token: data.session.refresh_token,
-    });
     setSession(data.session);
     await loadProfile(data.session.user?.id);
     return { error: null };
