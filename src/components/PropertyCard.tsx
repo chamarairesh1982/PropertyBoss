@@ -3,8 +3,8 @@ import { useFavorites, useToggleFavorite } from '../hooks/useFavorites';
 import { useAuth } from '../hooks/useAuth';
 import { useComparison } from '../hooks/useComparison';
 import { useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../lib/supabaseClient';
 import type { Database } from '../types/supabase';
+import { fetchProperty } from '../hooks/useProperty';
 
 type Property = Database['public']['Tables']['properties']['Row'] & {
   property_media?: { url: string; type: string; ord: number | null }[];
@@ -31,17 +31,7 @@ export default function PropertyCard({ property }: Props) {
   function prefetch() {
     queryClient.prefetchQuery({
       queryKey: ['property', property.id],
-      queryFn: async () => {
-        const { data, error } = await supabase
-          .from('properties')
-          .select(
-            `*, property_media!property_id(url, type, ord), agent:agent_id(full_name, email, id)`,
-          )
-          .eq('id', property.id)
-          .single();
-        if (error) throw new Error(error.message);
-        return data;
-      },
+      queryFn: () => fetchProperty(property.id),
     });
   }
 

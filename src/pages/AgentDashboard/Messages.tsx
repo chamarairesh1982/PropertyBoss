@@ -1,6 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../hooks/useAuth';
-import { supabase } from '../../lib/supabaseClient';
+import { useAgentMessages } from '../../hooks/useAgentMessages';
 
 interface Message {
   id: string;
@@ -16,27 +15,7 @@ interface Message {
  */
 export default function Messages() {
   const { user } = useAuth();
-  const {
-    data: messages,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['agent-messages', user?.id],
-    queryFn: async () => {
-      if (!user) return [];
-      const { data, error } = await supabase
-        .from('messages')
-        .select(
-          `id, content, created_at, property:property_id(title), sender:sender_id(full_name, email)`
-        )
-        .eq('receiver_id', user.id)
-        .order('created_at', { ascending: false });
-      if (error) throw new Error(error.message);
-      return data ?? [];
-    },
-    enabled: !!user,
-  });
-
+  const { data: messages, isLoading, error } = useAgentMessages();
   if (!user) {
     return <p>Please sign in as an agent to view messages.</p>;
   }
@@ -44,9 +23,7 @@ export default function Messages() {
     <div>
       <h2 className="text-xl font-bold mb-4">Messages</h2>
       {isLoading && <p>Loading messages…</p>}
-      {error && (
-        <p className="text-red-600">Error: {error.message}</p>
-      )}
+      {error && <p className="text-red-600">Error: {error.message}</p>}
       {messages && messages.length > 0 ? (
         <ul className="space-y-4">
           {(messages as Message[]).map((msg) => (

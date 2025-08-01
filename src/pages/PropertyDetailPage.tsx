@@ -1,7 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { supabase } from '../lib/supabaseClient';
+import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useProperties } from '../hooks/useProperties';
 import { useNearby } from '../hooks/useNearby';
@@ -11,6 +9,12 @@ import ReviewList from '../components/ReviewList';
 import ReviewForm from '../components/ReviewForm';
 import AppointmentForm from '../components/AppointmentForm';
 import { useReviews } from '../hooks/useReviews';
+import {
+  useProperty,
+  usePriceHistory,
+  useSendMessage,
+} from '../hooks/useProperty';
+import { useTrackPropertyView } from '../hooks/useTrackPropertyView';
 import {
   useFavoriteLists,
   useAddPropertyToList,
@@ -33,40 +37,10 @@ export default function PropertyDetailPage() {
   // Fetch property along with its images and agent profile.  We alias the
   // relationship to `agent` so that the returned object includes the agent's
   // full name and email.
-  const {
-    data: property,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['property', id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('properties')
-        .select(
-          `*, property_media!property_id(url, type, ord), agent:agent_id(full_name, email, id)`,
-        )
-        .eq('id', id)
-        .single();
-      if (error) throw new Error(error.message);
-      return data;
-    },
-    enabled: !!id,
-  });
+  const { data: property, isLoading, error } = useProperty(id ?? null);
 
   // Fetch price history for the property
-  const { data: history } = useQuery({
-    queryKey: ['price-history', id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('price_history')
-        .select('*')
-        .eq('property_id', id)
-        .order('recorded_at');
-      if (error) throw new Error(error.message);
-      return data ?? [];
-    },
-    enabled: !!id,
-  });
+  const { data: history } = usePriceHistory(id ?? null);
 
   // Prepare a query for similar properties once the current property is loaded.
   const { data: similar, isLoading: loadingSimilar } = useProperties(
@@ -88,11 +62,7 @@ export default function PropertyDetailPage() {
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
       : null;
 
-  useEffect(() => {
-    if (property) {
-      supabase.rpc('increment_property_view', { p_id: property.id });
-    }
-  }, [property]);
+  useTrackPropertyView(property?.id ?? null);
 
   const [tab, setTab] = useState<'photos' | 'floor' | 'video'>('photos');
 
@@ -101,23 +71,20 @@ export default function PropertyDetailPage() {
   const { toggle: toggleCompare, selected } = useComparison();
 
   // Mutation for sending a message to the agent.
-  const sendMessage = useMutation(async (content: string) => {
-    if (!user || !property) throw new Error('Must be signed in');
-    await supabase.from('messages').insert({
-      property_id: property.id,
-      sender_id: user.id,
-      receiver_id: property.agent?.id,
-      content,
-    });
-  });
+  const sendMessage = useSendMessage();
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
     const content = formData.get('message')?.toString() ?? '';
-    if (content.trim().length === 0) return;
-    sendMessage.mutate(content);
+    if (content.trim().length === 0 || !user || !property) return;
+    sendMessage.mutate({
+      propertyId: property.id,
+      senderId: user.id,
+      receiverId: property.agent?.id ?? '',
+      content,
+    });
     form.reset();
   }
 
