@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "types": ["../deno.d.ts"],
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "strict": true
+  }
+}

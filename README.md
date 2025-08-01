@@ -17,6 +17,7 @@ The interface now uses a token based theme with a refined colour palette and typ
 - **Authentication** using Supabase’s email/password and magic‑link providers. A `profiles` table stores user roles (`user`, `agent`, `admin`).
 - **Messaging**: users can send messages to agents about a property; agents can read and reply.
 - **Row Level Security** policies are implemented to ensure users only read and modify the data they are authorised to access.
+- **Rate limiting** on login and enquiry submissions helps block abuse.
 - **Viewing appointments**: users can request a viewing and agents manage their schedule in a calendar view.
 
 ## Getting started
