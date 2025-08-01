@@ -12,7 +12,7 @@ This project is a property listings portal inspired by popular real‑estate sit
 - **Authentication** using Supabase’s email/password and magic‑link providers. A `profiles` table stores user roles (`user`, `agent`, `admin`).
 - **Messaging**: users can send messages to agents about a property; agents can read and reply.
 - **Row Level Security** policies are implemented to ensure users only read and modify the data they are authorised to access.
-- **Interactive map of search results** using Leaflet with marker clustering.
+- **Viewing appointments**: users can request a viewing and agents manage their schedule in a calendar view.
 
 ## Getting started
 
@@ -55,6 +55,7 @@ this version, execute `supabase/update_v3.sql` as well.
 For the agent analytics and appointments features added in v4, run
 `supabase/update_v4.sql` after applying the earlier updates. To load the
 sample data used by the new calendar view, execute `supabase/update_v5.sql`
+
 after running the previous updates. To enable caching for nearby schools and
 amenities, apply `supabase/update_v6.sql` next.
 For favourite lists and comparison support added in v7, run
