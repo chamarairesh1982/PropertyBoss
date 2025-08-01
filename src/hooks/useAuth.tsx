@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useCallback,
   useState,
   ReactNode,
 } from 'react';
@@ -34,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   // Helper to load profile for current session
-  const loadProfile = async (sessionUserId: string | undefined) => {
+  const loadProfile = useCallback(async (sessionUserId: string | undefined) => {
     if (!sessionUserId) {
       setUser(null);
       return;
@@ -50,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const email = session?.user?.email ?? data.email ?? '';
       setUser({ ...data, email });
     }
-  };
+  }, [session]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -65,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       subscription.subscription.unsubscribe();
     };
-  }, []);
+  }, [loadProfile]);
 
   const signIn: AuthContextType['signIn'] = async (email, password) => {
     const { error, data } = await supabase.auth.signInWithPassword({ email, password });

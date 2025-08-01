@@ -33,6 +33,8 @@ export default function PropertyForm() {
     postcode: '',
     floor_area: 0,
     epc_rating: '',
+    property_age: 0,
+    tenure: 'freehold',
     amenities: '', // comma separated string
   });
 
@@ -63,6 +65,8 @@ export default function PropertyForm() {
               postcode: data.postcode ?? '',
               floor_area: data.floor_area ?? 0,
               epc_rating: data.epc_rating ?? '',
+              property_age: data.property_age ?? 0,
+              tenure: data.tenure ?? 'freehold',
               amenities: (data.amenities || []).join(','),
             });
           }
@@ -78,14 +82,24 @@ export default function PropertyForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: name === 'price' || name === 'bedrooms' || name === 'bathrooms' || name === 'floor_area' ? Number(value) : value }));
+    setForm((prev) => ({
+      ...prev,
+      [name]:
+        name === 'price' ||
+        name === 'bedrooms' ||
+        name === 'bathrooms' ||
+        name === 'floor_area' ||
+        name === 'property_age'
+          ? Number(value)
+          : value,
+    }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const payload: any = {
+    const payload: Record<string, unknown> = {
       ...form,
       amenities: form.amenities
         .split(',')
@@ -299,6 +313,37 @@ export default function PropertyForm() {
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
             />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700" htmlFor="property_age">
+              Property age (years)
+            </label>
+            <input
+              type="number"
+              id="property_age"
+              name="property_age"
+              value={form.property_age}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
+              min={0}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700" htmlFor="tenure">
+              Tenure
+            </label>
+            <select
+              id="tenure"
+              name="tenure"
+              value={form.tenure}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
+            >
+              <option value="freehold">Freehold</option>
+              <option value="leasehold">Leasehold</option>
+            </select>
           </div>
         </div>
         <div>

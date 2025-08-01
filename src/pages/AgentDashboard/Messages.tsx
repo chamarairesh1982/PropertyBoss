@@ -2,6 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../lib/supabaseClient';
 
+interface Message {
+  id: string;
+  content: string;
+  created_at: string;
+  property: { title: string } | null;
+  sender: { full_name: string | null; email: string | null } | null;
+}
+
 /**
  * Displays messages received by the agent.  Messages are grouped by property
  * and ordered by creation date.  Reply functionality could be added later.
@@ -41,7 +49,7 @@ export default function Messages() {
       )}
       {messages && messages.length > 0 ? (
         <ul className="space-y-4">
-          {messages.map((msg: any) => (
+          {(messages as Message[]).map((msg) => (
             <li key={msg.id} className="border rounded p-4">
               <div className="font-semibold text-sm text-gray-700">
                 {msg.property?.title ?? 'Unknown property'}

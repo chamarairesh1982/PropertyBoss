@@ -70,6 +70,8 @@ export interface Database {
           postcode: string | null;
           floor_area: number | null;
           epc_rating: string | null;
+          property_age: number | null;
+          tenure: string | null;
           amenities: string[] | null;
           has_photo: boolean;
           agent_id: string | null;
@@ -92,6 +94,8 @@ export interface Database {
           postcode?: string | null;
           floor_area?: number | null;
           epc_rating?: string | null;
+          property_age?: number | null;
+          tenure?: string | null;
           amenities?: string[] | null;
           has_photo?: boolean;
           agent_id?: string | null;
@@ -114,6 +118,8 @@ export interface Database {
           postcode?: string | null;
           floor_area?: number | null;
           epc_rating?: string | null;
+          property_age?: number | null;
+          tenure?: string | null;
           amenities?: string[] | null;
           has_photo?: boolean;
           agent_id?: string | null;
@@ -237,9 +243,37 @@ export interface Database {
           },
         ];
       };
+      saved_searches: {
+        Row: {
+          id: string;
+          user_id: string;
+          criteria: Json;
+          created_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          criteria: Json;
+          created_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          criteria?: Json;
+          created_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'saved_searches_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
-    Views: {};
-    Functions: {};
-    Enums: {};
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
   };
 }

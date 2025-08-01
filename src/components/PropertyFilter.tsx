@@ -17,8 +17,21 @@ export default function PropertyFilter({ filters, onChange }: Props) {
   ) {
     const { name, value } = e.target;
     // Convert numeric fields to numbers.  Empty strings become undefined.
-    let parsed: any = value;
-    if (['minPrice', 'maxPrice', 'bedrooms', 'bathrooms', 'addedSince'].includes(name)) {
+    let parsed: string | number | undefined = value;
+    if (
+      [
+        'minPrice',
+        'maxPrice',
+        'bedrooms',
+        'bathrooms',
+        'addedSince',
+        'minFloorArea',
+        'maxFloorArea',
+        'minAge',
+        'maxAge',
+        'radiusMiles',
+      ].includes(name)
+    ) {
       parsed = value === '' ? undefined : Number(value);
     }
     onChange({ ...filters, [name]: parsed });
@@ -157,6 +170,118 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             onChange={handleInput}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
             placeholder="garden, parking..."
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700" htmlFor="minFloorArea">
+            Min floor area (m²)
+          </label>
+          <input
+            type="number"
+            id="minFloorArea"
+            name="minFloorArea"
+            value={filters.minFloorArea ?? ''}
+            onChange={handleInput}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            min={0}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700" htmlFor="maxFloorArea">
+            Max floor area (m²)
+          </label>
+          <input
+            type="number"
+            id="maxFloorArea"
+            name="maxFloorArea"
+            value={filters.maxFloorArea ?? ''}
+            onChange={handleInput}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            min={0}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700" htmlFor="minAge">
+            Min age (years)
+          </label>
+          <input
+            type="number"
+            id="minAge"
+            name="minAge"
+            value={filters.minAge ?? ''}
+            onChange={handleInput}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            min={0}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700" htmlFor="maxAge">
+            Max age (years)
+          </label>
+          <input
+            type="number"
+            id="maxAge"
+            name="maxAge"
+            value={filters.maxAge ?? ''}
+            onChange={handleInput}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            min={0}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700" htmlFor="energyRating">
+            Energy rating
+          </label>
+          <input
+            type="text"
+            id="energyRating"
+            name="energyRating"
+            value={filters.energyRating ?? ''}
+            onChange={handleInput}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700" htmlFor="tenure">
+            Tenure
+          </label>
+          <select
+            id="tenure"
+            name="tenure"
+            value={filters.tenure ?? ''}
+            onChange={handleInput}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+          >
+            <option value="">Any</option>
+            <option value="freehold">Freehold</option>
+            <option value="leasehold">Leasehold</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700" htmlFor="postcode">
+            Postcode
+          </label>
+          <input
+            type="text"
+            id="postcode"
+            name="postcode"
+            value={filters.postcode ?? ''}
+            onChange={handleInput}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700" htmlFor="radiusMiles">
+            Radius (miles)
+          </label>
+          <input
+            type="number"
+            id="radiusMiles"
+            name="radiusMiles"
+            value={filters.radiusMiles ?? ''}
+            onChange={handleInput}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            min={0}
           />
         </div>
         <div>
