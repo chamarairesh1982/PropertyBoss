@@ -1,8 +1,8 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.43.1';
+import { serve } from '../deno_std_http_server.ts';
+import { createClient } from '../supabase_client.ts';
 
-serve(async (req) => {
-  const { lat, lon } = await req.json();
+serve(async (req: Request) => {
+  const { lat, lon } = (await req.json()) as { lat: number; lon: number };
 
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
@@ -31,10 +31,12 @@ serve(async (req) => {
     method: 'POST',
     body: query,
   });
-  const data = await res.json() as { elements: { tags?: { name?: string } }[] };
+  const data = (await res.json()) as {
+    elements: { tags?: { name?: string } }[];
+  };
   const results = data.elements
-    .map((el) => el.tags?.name)
-    .filter((n): n is string => Boolean(n));
+    .map((el: { tags?: { name?: string } }) => el.tags?.name)
+    .filter((n: string | undefined): n is string => Boolean(n));
 
   await supabase.from('nearby_cache').upsert({
     lat: latKey,
