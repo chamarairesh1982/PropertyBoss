@@ -28,6 +28,7 @@ export default function PropertyForm() {
     bathrooms: 0,
     property_type: 'house',
     listing_type: 'sale',
+    status: 'available',
     address: '',
     city: '',
     postcode: '',
@@ -62,6 +63,7 @@ export default function PropertyForm() {
               bathrooms: data.bathrooms ?? 0,
               property_type: data.property_type ?? 'house',
               listing_type: data.listing_type ?? 'sale',
+              status: data.status ?? 'available',
               address: data.address ?? '',
               city: data.city ?? '',
               postcode: data.postcode ?? '',
@@ -234,6 +236,22 @@ export default function PropertyForm() {
             >
               <option value="sale">Sale</option>
               <option value="rent">Rent</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700" htmlFor="status">
+              Status
+            </label>
+            <select
+              id="status"
+              name="status"
+              value={form.status}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
+            >
+              <option value="available">Available</option>
+              <option value="sold">Sold</option>
+              <option value="let">Let</option>
             </select>
           </div>
         </div>
