@@ -1,5 +1,6 @@
 import { useDeleteReview, useReviews } from '../hooks/useReviews';
 import { useAuth } from '../hooks/useAuth';
+import { sanitizeHtml } from '../lib/sanitizeHtml';
 
 type Props = { propertyId: string };
 
@@ -32,7 +33,9 @@ export default function ReviewList({ propertyId }: Props) {
               </button>
             )}
           </div>
-          {r.comment && <p className="text-gray-700 text-sm">{r.comment}</p>}
+          {r.comment && (
+            <p className="text-gray-700 text-sm">{sanitizeHtml(r.comment)}</p>
+          )}
         </li>
       ))}
     </ul>

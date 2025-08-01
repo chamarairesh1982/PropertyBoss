@@ -20,6 +20,7 @@ import {
   useAddPropertyToList,
 } from '../hooks/useFavoriteLists';
 import { useComparison } from '../hooks/useComparison';
+import { sanitizeHtml } from '../lib/sanitizeHtml';
 
 interface RouteParams {
   id: string;
@@ -258,7 +259,7 @@ export default function PropertyDetailPage() {
         <div>
           <h3 className="text-lg font-semibold mb-2">Description</h3>
           <p className="whitespace-pre-line text-gray-800">
-            {property.description}
+            {sanitizeHtml(property.description)}
           </p>
         </div>
       )}
