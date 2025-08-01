@@ -2,6 +2,10 @@
 
 This project is a property listings portal inspired by popular real‑estate sites. It has been built using **React**, **TypeScript**, **Vite**, **Tailwind CSS**, **React Query** and **Supabase**. The goal of this portal is to provide a solid foundation for browsing, searching and managing property listings, while demonstrating how to integrate client‑side code with Supabase for authentication, storage and row‑level security.
 
+## Modern responsive UI
+
+The interface now uses a token based theme with a refined colour palette and typography. Property cards display price overlays and subtle hover animations while skeleton loaders keep layouts stable during data fetches.
+
 ## Features
 
 - **Browse and search properties** by location, price range, bedrooms, bathrooms, listing type and more.

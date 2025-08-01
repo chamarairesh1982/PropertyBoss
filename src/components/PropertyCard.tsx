@@ -55,14 +55,26 @@ export default function PropertyCard({ property }: Props) {
       to={`/properties/${property.id}`}
       onMouseEnter={prefetch}
       onFocus={prefetch}
-      className="bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden flex flex-col"
+      className="relative bg-white rounded-lg shadow hover:shadow-lg transform hover:scale-[1.02] transition overflow-hidden flex flex-col"
     >
       {firstImage ? (
-        <img
-          src={firstImage.url}
-          alt={property.title}
-          className="h-48 w-full object-cover"
-        />
+        <div className="relative">
+          <img
+            src={firstImage.url}
+            alt={property.title}
+            className="h-48 w-full object-cover"
+          />
+          <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent text-white p-2 text-sm">
+            <div className="font-semibold">
+              {property.listing_type === 'rent'
+                ? `£${property.price.toLocaleString()}/mo`
+                : `£${property.price.toLocaleString()}`}
+            </div>
+            <div>
+              {property.bedrooms} bd • {property.bathrooms} ba
+            </div>
+          </div>
+        </div>
       ) : (
         <div className="h-48 w-full bg-gray-200 flex items-center justify-center text-gray-400">
           No image
@@ -75,17 +87,7 @@ export default function PropertyCard({ property }: Props) {
         <p className="text-sm text-gray-600 mb-2 truncate">
           {property.city || property.address || '—'}
         </p>
-        <div className="mt-auto flex items-center justify-between">
-          <div>
-            <span className="text-xl font-bold text-blue-600">
-              {property.listing_type === 'rent'
-                ? `£${property.price.toLocaleString()}/mo`
-                : `£${property.price.toLocaleString()}`}
-            </span>
-            <span className="text-sm text-gray-500 ml-2">
-              {property.bedrooms} bd • {property.bathrooms} ba
-            </span>
-          </div>
+        <div className="mt-auto flex items-center justify-end">
           {user && (
             <div className="flex gap-2">
               <button

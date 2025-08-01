@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useLocation } from 'react-router-dom';
 import PropertyList from '../components/PropertyList';
 import PropertyFilter from '../components/PropertyFilter';
+import PropertyCardSkeleton from '../components/PropertyCardSkeleton';
 import { useInfiniteProperties } from '../hooks/useProperties';
 import type { PropertyFilters } from '../hooks/useProperties';
 import { useSaveSearch } from '../hooks/useSavedSearches';
@@ -61,7 +62,13 @@ export default function HomePage() {
             Save search
           </button>
         )}
-        {isLoading && <p className="p-4">Loading properties…</p>}
+        {isLoading && (
+          <div className="grid gap-6 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <PropertyCardSkeleton key={i} />
+            ))}
+          </div>
+        )}
         {error && <p className="p-4 text-red-600">Error: {error.message}</p>}
         {!isLoading && !error && properties && (
           <>
