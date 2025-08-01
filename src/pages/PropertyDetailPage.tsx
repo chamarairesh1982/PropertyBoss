@@ -11,6 +11,8 @@ import ReviewList from '../components/ReviewList';
 import ReviewForm from '../components/ReviewForm';
 import AppointmentForm from '../components/AppointmentForm';
 import { useReviews } from '../hooks/useReviews';
+import { useFavoriteLists, useAddPropertyToList } from '../hooks/useFavoriteLists';
+import { useComparison } from '../hooks/useComparison';
 
 interface RouteParams {
   id: string;
@@ -90,6 +92,10 @@ export default function PropertyDetailPage() {
   }, [property]);
 
   const [tab, setTab] = useState<'photos' | 'floor' | 'video'>('photos');
+
+  const { data: lists } = useFavoriteLists();
+  const addToList = useAddPropertyToList();
+  const { toggle: toggleCompare, selected } = useComparison();
 
   // Mutation for sending a message to the agent.
   const sendMessage = useMutation(async (content: string) => {
@@ -222,6 +228,37 @@ export default function PropertyDetailPage() {
         )}
         {property.tenure && (
           <div className="text-gray-700">Tenure: {property.tenure}</div>
+        )}
+        {user && lists && (
+          <div>
+            <label htmlFor="favlist" className="mr-2 text-sm">Save to list:</label>
+            <select
+              id="favlist"
+              className="border p-1"
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val) {
+                  addToList.mutate({ listId: val, propertyId: property.id });
+                  e.currentTarget.selectedIndex = 0;
+                }
+              }}
+            >
+              <option value="">Select</option>
+              {lists?.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+        {user && (
+          <button
+            onClick={() => toggleCompare(property.id)}
+            className="mt-2 px-3 py-1 border rounded"
+          >
+            {selected.includes(property.id) ? 'Remove from compare' : 'Compare'}
+          </button>
         )}
         {property.amenities && property.amenities.length > 0 && (
           <div className="flex flex-wrap gap-2">

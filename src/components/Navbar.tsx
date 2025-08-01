@@ -34,6 +34,22 @@ export default function Navbar() {
               Favourites
             </Link>
           )}
+          {user && (
+            <Link
+              to="/lists"
+              className="text-gray-700 hover:text-blue-600 hidden sm:inline"
+            >
+              Lists
+            </Link>
+          )}
+          {user && (
+            <Link
+              to="/compare"
+              className="text-gray-700 hover:text-blue-600 hidden sm:inline"
+            >
+              Compare
+            </Link>
+          )}
           {user?.role === 'agent' && (
             <Link
               to="/agent"

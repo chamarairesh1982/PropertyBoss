@@ -231,6 +231,65 @@ export interface Database {
           },
         ];
       };
+      favorite_lists: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          name: string;
+          created_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          name: string;
+          created_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          name?: string;
+          created_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'favorite_lists_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      favorite_list_items: {
+        Row: {
+          list_id: string;
+          property_id: string;
+          created_at: string | null;
+        };
+        Insert: {
+          list_id: string;
+          property_id: string;
+          created_at?: string | null;
+        };
+        Update: {
+          list_id?: string;
+          property_id?: string;
+          created_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'favorite_list_items_list_id_fkey';
+            columns: ['list_id'];
+            referencedRelation: 'favorite_lists';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'favorite_list_items_property_id_fkey';
+            columns: ['property_id'];
+            referencedRelation: 'properties';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
       messages: {
         Row: {
           id: string;
