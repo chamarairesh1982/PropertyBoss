@@ -1,14 +1,10 @@
 import { Link, Routes, Route, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '../../lib/supabaseClient';
 import PropertyForm from './PropertyForm';
 import Messages from './Messages';
 import Appointments from './Appointments';
 import { useListingStats } from '../../hooks/useListingStats';
-import type { Database } from '../../types/supabase';
-
-type Property = Database['public']['Tables']['properties']['Row'];
+import { useAgentProperties } from '../../hooks/useAgentProperties';
 
 /**
  * The agent dashboard allows estate agents to manage their listings and
@@ -20,24 +16,7 @@ export default function AgentDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { data: stats } = useListingStats();
-  const {
-    data: properties,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['agent-properties', user?.id],
-    queryFn: async () => {
-      if (!user) return [] as Property[];
-      const { data, error } = await supabase
-        .from('properties')
-        .select('*, property_media!property_id(url, type, ord)')
-        .eq('agent_id', user.id)
-        .order('created_at', { ascending: false });
-      if (error) throw new Error(error.message);
-      return (data ?? []) as Property[];
-    },
-    enabled: !!user && user.role === 'agent',
-  });
+  const { data: properties, isLoading, error } = useAgentProperties();
 
   // Only agents are allowed access
   if (!user || user.role !== 'agent') {
@@ -72,9 +51,7 @@ export default function AgentDashboard() {
           element={
             <div>
               {isLoading && <p>Loading your properties…</p>}
-              {error && (
-                <p className="text-red-600">Error: {error.message}</p>
-              )}
+              {error && <p className="text-red-600">Error: {error.message}</p>}
               {properties && properties.length > 0 ? (
                 <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
                   {properties.map((p) => (
@@ -89,9 +66,15 @@ export default function AgentDashboard() {
                       </div>
                       {stats && (
                         <div className="text-xs text-gray-500 mb-2">
-                          views: {stats.find((s) => s.property_id === p.id)?.views ?? 0},
-                          enquiries: {stats.find((s) => s.property_id === p.id)?.enquiries ?? 0},
-                          favs: {stats.find((s) => s.property_id === p.id)?.favorites ?? 0}
+                          views:{' '}
+                          {stats.find((s) => s.property_id === p.id)?.views ??
+                            0}
+                          , enquiries:{' '}
+                          {stats.find((s) => s.property_id === p.id)
+                            ?.enquiries ?? 0}
+                          , favs:{' '}
+                          {stats.find((s) => s.property_id === p.id)
+                            ?.favorites ?? 0}
                         </div>
                       )}
                       <button
