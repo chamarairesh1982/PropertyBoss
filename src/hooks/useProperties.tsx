@@ -42,6 +42,7 @@ export function useProperties(filters: PropertyFilters) {
           `*, property_media!property_id(url, type, ord)`,
         )
         .order('created_at', { ascending: false });
+      query = query.eq('status', 'available');
 
       if (filters.postcode && filters.radiusMiles) {
         const coords = await lookupPostcode(filters.postcode);

@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../hooks/useAuth';
@@ -9,6 +9,7 @@ import PropertyList from '../components/PropertyList';
 import LineChart from '../components/LineChart';
 import ReviewList from '../components/ReviewList';
 import ReviewForm from '../components/ReviewForm';
+import AppointmentForm from '../components/AppointmentForm';
 import { useReviews } from '../hooks/useReviews';
 
 interface RouteParams {
@@ -81,6 +82,12 @@ export default function PropertyDetailPage() {
     reviews && reviews.length > 0
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
       : null;
+
+  useEffect(() => {
+    if (property) {
+      supabase.rpc('increment_property_view', { p_id: property.id });
+    }
+  }, [property]);
 
   const [tab, setTab] = useState<'photos' | 'floor' | 'video'>('photos');
 
@@ -295,6 +302,7 @@ export default function PropertyDetailPage() {
           </p>
         )}
       </div>
+      <AppointmentForm propertyId={property.id} agentId={property.agent?.id ?? ''} />
       {/* Reviews */}
       <div>
         <h3 className="text-lg font-semibold mb-2">

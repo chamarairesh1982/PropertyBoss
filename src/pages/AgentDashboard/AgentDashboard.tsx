@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabaseClient';
 import PropertyForm from './PropertyForm';
 import Messages from './Messages';
+import Appointments from './Appointments';
+import { useListingStats } from '../../hooks/useListingStats';
 import type { Database } from '../../types/supabase';
 
 type Property = Database['public']['Tables']['properties']['Row'];
@@ -17,6 +19,7 @@ type Property = Database['public']['Tables']['properties']['Row'];
 export default function AgentDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { data: stats } = useListingStats();
   const {
     data: properties,
     isLoading,
@@ -59,6 +62,9 @@ export default function AgentDashboard() {
         <Link to="messages" className="text-blue-600 underline">
           Messages
         </Link>
+        <Link to="appointments" className="text-blue-600 underline">
+          Appointments
+        </Link>
       </nav>
       <Routes>
         <Route
@@ -81,6 +87,13 @@ export default function AgentDashboard() {
                         £{p.price.toLocaleString()}{' '}
                         {p.listing_type === 'rent' ? '/mo' : ''}
                       </div>
+                      {stats && (
+                        <div className="text-xs text-gray-500 mb-2">
+                          views: {stats.find((s) => s.property_id === p.id)?.views ?? 0},
+                          enquiries: {stats.find((s) => s.property_id === p.id)?.enquiries ?? 0},
+                          favs: {stats.find((s) => s.property_id === p.id)?.favorites ?? 0}
+                        </div>
+                      )}
                       <button
                         onClick={() => navigate(`edit/${p.id}`)}
                         className="mt-auto text-blue-600 underline text-sm"
@@ -99,6 +112,7 @@ export default function AgentDashboard() {
         <Route path="new" element={<PropertyForm />} />
         <Route path="edit/:id" element={<PropertyForm />} />
         <Route path="messages" element={<Messages />} />
+        <Route path="appointments" element={<Appointments />} />
       </Routes>
     </div>
   );

@@ -74,6 +74,7 @@ export interface Database {
           tenure: string | null;
           amenities: string[] | null;
           has_photo: boolean;
+          status: string;
           agent_id: string | null;
           created_at: string | null;
           updated_at: string | null;
@@ -98,6 +99,7 @@ export interface Database {
           tenure?: string | null;
           amenities?: string[] | null;
           has_photo?: boolean;
+          status?: string;
           agent_id?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
@@ -122,6 +124,7 @@ export interface Database {
           tenure?: string | null;
           amenities?: string[] | null;
           has_photo?: boolean;
+          status?: string;
           agent_id?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
@@ -343,6 +346,83 @@ export interface Database {
             referencedRelation: 'profiles';
             referencedColumns: ['id'];
           },
+        ];
+      };
+      listing_stats: {
+        Row: {
+          property_id: string;
+          views: number;
+          enquiries: number;
+          favorites: number;
+        };
+        Insert: {
+          property_id: string;
+          views?: number;
+          enquiries?: number;
+          favorites?: number;
+        };
+        Update: {
+          property_id?: string;
+          views?: number;
+          enquiries?: number;
+          favorites?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'listing_stats_property_id_fkey';
+            columns: ['property_id'];
+            referencedRelation: 'properties';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      appointments: {
+        Row: {
+          id: string;
+          property_id: string | null;
+          user_id: string | null;
+          agent_id: string | null;
+          timeslot: string;
+          status: string;
+          created_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          property_id: string;
+          user_id: string;
+          agent_id: string;
+          timeslot: string;
+          status?: string;
+          created_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          property_id?: string;
+          user_id?: string;
+          agent_id?: string;
+          timeslot?: string;
+          status?: string;
+          created_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'appointments_property_id_fkey';
+            columns: ['property_id'];
+            referencedRelation: 'properties';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'appointments_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'appointments_agent_id_fkey';
+            columns: ['agent_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
         ];
       };
     };

@@ -48,6 +48,8 @@ supabase db push supabase/seed.sql
 If you already applied the initial seed you can run `supabase/update_v2.sql`
 to add the previous tables and policies. For the reviews feature introduced in
 this version, execute `supabase/update_v3.sql` as well.
+For the agent analytics and appointments features added in v4, run
+`supabase/update_v4.sql` after applying the earlier updates.
 
 5. **Deploy the Edge Function**
 
