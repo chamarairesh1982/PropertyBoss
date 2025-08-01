@@ -210,6 +210,19 @@ create table if not exists public.rate_limits (
   primary key (identifier, event)
 );
 
+--
+-- Table: audit_logs
+--
+-- Stores a history of changes to sensitive tables.
+create table if not exists public.audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid,
+  action text not null,
+  "table" text not null,
+  record_id uuid,
+  "timestamp" timestamp with time zone default now()
+);
+
 -- Enable Row Level Security for every table.  RLS must be enabled before policies can be
 -- applied.  By default, Supabase denies all access until explicit policies permit it.
 alter table public.profiles enable row level security;
@@ -475,6 +488,41 @@ begin
   return new;
 end;
 $$;
+
+-- Trigger function to record audit logs
+create or replace function public.record_audit()
+returns trigger language plpgsql as $$
+begin
+  insert into public.audit_logs(user_id, action, "table", record_id, "timestamp")
+  values (auth.uid(), tg_op, tg_table_name, coalesce(new.id, old.id), now());
+  if tg_op = 'DELETE' then
+    return old;
+  else
+    return new;
+  end if;
+end;
+$$;
+
+-- Audit triggers for sensitive tables
+drop trigger if exists profiles_audit on public.profiles;
+create trigger profiles_audit
+after insert or update or delete on public.profiles
+for each row execute procedure public.record_audit();
+
+drop trigger if exists properties_audit on public.properties;
+create trigger properties_audit
+after insert or update or delete on public.properties
+for each row execute procedure public.record_audit();
+
+drop trigger if exists messages_audit on public.messages;
+create trigger messages_audit
+after insert or update or delete on public.messages
+for each row execute procedure public.record_audit();
+
+drop trigger if exists reviews_audit on public.reviews;
+create trigger reviews_audit
+after insert or update or delete on public.reviews
+for each row execute procedure public.record_audit();
 
 drop trigger if exists property_image_after_insert on public.property_media;
 create trigger property_image_after_insert
