@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useFavorites, useToggleFavorite } from '../hooks/useFavorites';
 import { useAuth } from '../hooks/useAuth';
+import { useComparison } from '../hooks/useComparison';
 import type { Database } from '../types/supabase';
 
 type Property = Database['public']['Tables']['properties']['Row'] & {
@@ -21,6 +22,8 @@ export default function PropertyCard({ property }: Props) {
   const { data: favourites } = useFavorites();
   const toggleFavourite = useToggleFavorite();
   const isFavourited = favourites?.includes(property.id);
+  const { selected, toggle: toggleCompare } = useComparison();
+  const inCompare = selected.includes(property.id);
 
   const firstImage =
     property.property_media?.find((m) => m.type === 'photo') || null;
@@ -29,6 +32,12 @@ export default function PropertyCard({ property }: Props) {
     e.preventDefault();
     if (!user) return;
     await toggleFavourite.mutateAsync(property.id);
+  }
+
+  function handleCompare(e: React.MouseEvent) {
+    e.preventDefault();
+    if (!user) return;
+    toggleCompare(property.id);
   }
 
   return (
@@ -64,21 +73,26 @@ export default function PropertyCard({ property }: Props) {
             </span>
           </div>
           {user && (
-            <button
-              onClick={handleToggle}
-              className="p-2 rounded-full hover:bg-gray-100"
-              title={isFavourited ? 'Remove from favourites' : 'Save to favourites'}
-            >
-              {isFavourited ? (
-                <span role="img" aria-label="favourited">
-                  ❤️
-                </span>
-              ) : (
-                <span role="img" aria-label="not favourited">
-                  🤍
-                </span>
-              )}
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleToggle}
+                className="p-2 rounded-full hover:bg-gray-100"
+                title={isFavourited ? 'Remove from favourites' : 'Save to favourites'}
+              >
+                {isFavourited ? (
+                  <span role="img" aria-label="favourited">❤️</span>
+                ) : (
+                  <span role="img" aria-label="not favourited">🤍</span>
+                )}
+              </button>
+              <button
+                onClick={handleCompare}
+                className="p-2 rounded-full hover:bg-gray-100"
+                title={inCompare ? 'Remove from comparison' : 'Add to comparison'}
+              >
+                {inCompare ? '✓' : '≣'}
+              </button>
+            </div>
           )}
         </div>
       </div>

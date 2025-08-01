@@ -97,6 +97,28 @@ create table if not exists public.favorites (
 );
 
 --
+-- Table: favorite_lists
+--
+-- Stores named collections of a user's favourite properties.
+create table if not exists public.favorite_lists (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid references public.profiles (id) on delete cascade,
+  name text not null,
+  created_at timestamp with time zone default now()
+);
+
+--
+-- Table: favorite_list_items
+--
+-- Join table linking lists to properties.
+create table if not exists public.favorite_list_items (
+  list_id uuid references public.favorite_lists(id) on delete cascade,
+  property_id uuid references public.properties(id) on delete cascade,
+  created_at timestamp with time zone default now(),
+  primary key (list_id, property_id)
+);
+
+--
 -- Table: saved_searches
 --
 -- Stores saved search criteria for users. The criteria column contains a JSON
@@ -183,6 +205,8 @@ alter table public.properties enable row level security;
 alter table public.property_media enable row level security;
 alter table public.price_history enable row level security;
 alter table public.favorites enable row level security;
+alter table public.favorite_lists enable row level security;
+alter table public.favorite_list_items enable row level security;
 alter table public.messages enable row level security;
 alter table public.saved_searches enable row level security;
 alter table public.reviews enable row level security;
@@ -313,6 +337,45 @@ with check (user_id = auth.uid());
 create policy "Users can unfavourite a property" on public.favorites
 for delete
 using (user_id = auth.uid());
+
+--
+-- RLS Policies for favorite_lists
+--
+create policy "Users can view their favorite lists" on public.favorite_lists
+  for select using (user_id = auth.uid());
+
+create policy "Users can create favorite lists" on public.favorite_lists
+  for insert with check (user_id = auth.uid());
+
+create policy "Users can delete favorite lists" on public.favorite_lists
+  for delete using (user_id = auth.uid());
+
+--
+-- RLS Policies for favorite_list_items
+--
+create policy "Users can view list items" on public.favorite_list_items
+  for select using (
+    exists (
+      select 1 from public.favorite_lists fl
+      where fl.id = favorite_list_items.list_id and fl.user_id = auth.uid()
+    )
+  );
+
+create policy "Users can add list items" on public.favorite_list_items
+  for insert with check (
+    exists (
+      select 1 from public.favorite_lists fl
+      where fl.id = favorite_list_items.list_id and fl.user_id = auth.uid()
+    )
+  );
+
+create policy "Users can remove list items" on public.favorite_list_items
+  for delete using (
+    exists (
+      select 1 from public.favorite_lists fl
+      where fl.id = favorite_list_items.list_id and fl.user_id = auth.uid()
+    )
+  );
 
 --
 -- RLS Policies for saved_searches
@@ -526,6 +589,20 @@ values
 -- initialise stats for demo properties
 insert into public.listing_stats(property_id)
 select id from public.properties;
+
+-- demo favourite list
+insert into public.favorite_lists(id, user_id, name)
+values (
+  '33333333-4444-4555-8666-777777777777',
+  '00000000-0000-4000-8000-000000000002',
+  'My Favourites'
+);
+
+insert into public.favorite_list_items(list_id, property_id)
+values (
+  '33333333-4444-4555-8666-777777777777',
+  '11111111-2222-4333-8444-555555555555'
+);
 
 -- demo appointment
 insert into public.appointments(id, property_id, user_id, agent_id, timeslot, status)

@@ -54,6 +54,8 @@ For the agent analytics and appointments features added in v4, run
 sample data used by the new calendar view, execute `supabase/update_v5.sql`
 after running the previous updates. To enable caching for nearby schools and
 amenities, apply `supabase/update_v6.sql` next.
+For favourite lists and comparison support added in v7, run
+`supabase/update_v7.sql` after applying the earlier updates.
 
 5. **Deploy the Edge Function**
 
