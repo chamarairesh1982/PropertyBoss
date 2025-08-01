@@ -1,4 +1,8 @@
-import { useFavoriteLists, useListItems, useCreateFavoriteList } from '../hooks/useFavoriteLists';
+import {
+  useFavoriteLists,
+  useListItems,
+  useCreateFavoriteList,
+} from '../hooks/useFavoriteLists';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,7 +16,12 @@ export default function FavoriteListsPage() {
   const { user } = useAuth();
   const { data: lists, isLoading, error } = useFavoriteLists();
   const createList = useCreateFavoriteList();
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(schema) });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   async function onSubmit(data: FormData) {
     await createList.mutateAsync(data.name);
@@ -21,14 +30,35 @@ export default function FavoriteListsPage() {
 
   if (!user) return <p className="p-4">Please sign in to manage lists.</p>;
   if (isLoading) return <p className="p-4">Loading…</p>;
-  if (error) return <p className="p-4 text-red-600">Error: {(error as Error).message}</p>;
+  if (error)
+    return (
+      <p className="p-4 text-red-600">Error: {(error as Error).message}</p>
+    );
 
   return (
     <div className="max-w-5xl mx-auto p-4 space-y-6">
       <h1 className="text-2xl font-bold">Your lists</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex gap-2 max-w-md">
-        <input className="border p-2 flex-1" placeholder="List name" {...register('name')} />
-        <button type="submit" className="bg-blue-600 text-white px-3 py-2 rounded">Add</button>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex gap-2 max-w-md items-start"
+      >
+        <div className="flex-1">
+          <label htmlFor="listName" className="sr-only">
+            List name
+          </label>
+          <input
+            id="listName"
+            className="border p-2 w-full"
+            placeholder="List name"
+            {...register('name')}
+          />
+        </div>
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-3 py-2 rounded"
+        >
+          Add
+        </button>
       </form>
       {errors.name && <p className="text-red-600 text-sm">Name is required</p>}
       {lists && lists.length === 0 && <p>No lists yet.</p>}

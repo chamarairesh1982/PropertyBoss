@@ -59,6 +59,8 @@ after running the previous updates. To enable caching for nearby schools and
 amenities, apply `supabase/update_v6.sql` next.
 For favourite lists and comparison support added in v7, run
 `supabase/update_v7.sql` after applying the earlier updates.
+To refresh derived data for existing rows, execute `supabase/update_v8.sql`
+after running the previous updates.
 
 5. **Deploy the Edge Function**
 
