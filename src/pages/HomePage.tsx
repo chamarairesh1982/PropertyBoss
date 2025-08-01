@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import PropertyList from '../components/PropertyList';
 import PropertyFilter from '../components/PropertyFilter';
 import { useProperties } from '../hooks/useProperties';
 import type { PropertyFilters } from '../hooks/useProperties';
 import { useSaveSearch } from '../hooks/useSavedSearches';
 import { useAuth } from '../hooks/useAuth';
+
+const PropertyMap = lazy(() => import('../components/PropertyMap'));
 
 /**
  * Landing page for browsing and searching properties.  Maintains the current
@@ -35,7 +37,12 @@ export default function HomePage() {
           <p className="p-4 text-red-600">Error: {error.message}</p>
         )}
         {!isLoading && !error && properties && (
-          <PropertyList properties={properties} />
+          <>
+            <PropertyList properties={properties} />
+            <Suspense fallback={<p className="p-4">Loading map…</p>}>
+              <PropertyMap properties={properties} />
+            </Suspense>
+          </>
         )}
       </div>
     </div>
