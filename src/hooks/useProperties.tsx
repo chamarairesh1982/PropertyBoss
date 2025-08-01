@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabaseClient';
-import type { Database } from '../types/supabase';
+import { lookupPostcode } from '../lib/postcodeLookup';
 
 /**
  * Filters available when searching for properties.  All fields are optional.
@@ -16,6 +16,14 @@ export interface PropertyFilters {
   hasPhoto?: boolean;
   keywords?: string;
   addedSince?: number; // number of days ago
+  minFloorArea?: number;
+  maxFloorArea?: number;
+  minAge?: number;
+  maxAge?: number;
+  energyRating?: string;
+  tenure?: string;
+  postcode?: string;
+  radiusMiles?: number;
 }
 
 /**
@@ -35,6 +43,21 @@ export function useProperties(filters: PropertyFilters) {
         )
         .order('created_at', { ascending: false });
 
+      if (filters.postcode && filters.radiusMiles) {
+        const coords = await lookupPostcode(filters.postcode);
+        if (coords) {
+          const { latitude, longitude } = coords;
+          const latDelta = filters.radiusMiles / 69;
+          const lonDelta =
+            filters.radiusMiles / (69 * Math.cos((latitude * Math.PI) / 180));
+          query = query
+            .gte('latitude', latitude - latDelta)
+            .lte('latitude', latitude + latDelta)
+            .gte('longitude', longitude - lonDelta)
+            .lte('longitude', longitude + lonDelta);
+        }
+      }
+
       if (filters.city) {
         query = query.ilike('city', `%${filters.city}%`);
       }
@@ -50,11 +73,29 @@ export function useProperties(filters: PropertyFilters) {
       if (filters.bathrooms != null) {
         query = query.gte('bathrooms', filters.bathrooms);
       }
+      if (filters.minFloorArea != null) {
+        query = query.gte('floor_area', filters.minFloorArea);
+      }
+      if (filters.maxFloorArea != null) {
+        query = query.lte('floor_area', filters.maxFloorArea);
+      }
+      if (filters.minAge != null) {
+        query = query.gte('property_age', filters.minAge);
+      }
+      if (filters.maxAge != null) {
+        query = query.lte('property_age', filters.maxAge);
+      }
       if (filters.propertyType) {
         query = query.eq('property_type', filters.propertyType);
       }
       if (filters.listingType) {
         query = query.eq('listing_type', filters.listingType);
+      }
+      if (filters.energyRating) {
+        query = query.eq('epc_rating', filters.energyRating);
+      }
+      if (filters.tenure) {
+        query = query.eq('tenure', filters.tenure);
       }
       if (filters.hasPhoto) {
         query = query.eq('has_photo', true);

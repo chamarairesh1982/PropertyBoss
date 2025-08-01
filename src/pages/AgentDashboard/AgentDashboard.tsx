@@ -17,6 +17,25 @@ type Property = Database['public']['Tables']['properties']['Row'];
 export default function AgentDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const {
+    data: properties,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['agent-properties', user?.id],
+    queryFn: async () => {
+      if (!user) return [] as Property[];
+      const { data, error } = await supabase
+        .from('properties')
+        .select('*, property_images!property_id(url, ord)')
+        .eq('agent_id', user.id)
+        .order('created_at', { ascending: false });
+      if (error) throw new Error(error.message);
+      return (data ?? []) as Property[];
+    },
+    enabled: !!user && user.role === 'agent',
+  });
+
   // Only agents are allowed access
   if (!user || user.role !== 'agent') {
     return (
@@ -26,23 +45,6 @@ export default function AgentDashboard() {
       </div>
     );
   }
-  // Fetch properties owned by the current agent.
-  const {
-    data: properties,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['agent-properties', user.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('properties')
-        .select('*, property_images!property_id(url, ord)')
-        .eq('agent_id', user.id)
-        .order('created_at', { ascending: false });
-      if (error) throw new Error(error.message);
-      return data as Property[];
-    },
-  });
 
   return (
     <div className="max-w-5xl mx-auto p-4">
@@ -89,7 +91,7 @@ export default function AgentDashboard() {
                   ))}
                 </div>
               ) : (
-                <p>You haven't listed any properties yet.</p>
+                <p>You haven&apos;t listed any properties yet.</p>
               )}
             </div>
           }

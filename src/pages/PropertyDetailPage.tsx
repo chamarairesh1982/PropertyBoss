@@ -126,6 +126,12 @@ export default function PropertyDetailPage() {
         {property.epc_rating && (
           <div className="text-gray-700">EPC rating: {property.epc_rating}</div>
         )}
+        {property.property_age != null && (
+          <div className="text-gray-700">Age: {property.property_age} years</div>
+        )}
+        {property.tenure && (
+          <div className="text-gray-700">Tenure: {property.tenure}</div>
+        )}
         {property.amenities && property.amenities.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {property.amenities.map((amenity) => (

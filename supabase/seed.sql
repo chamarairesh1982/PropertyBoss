@@ -46,6 +46,8 @@ create table if not exists public.properties (
   postcode text,
   floor_area numeric,
   epc_rating text,
+  property_age integer,
+  tenure text,
   amenities text[],
   has_photo boolean default false,
   agent_id uuid references public.profiles (id) on delete set null,
@@ -81,6 +83,18 @@ create table if not exists public.favorites (
 );
 
 --
+-- Table: saved_searches
+--
+-- Stores saved search criteria for users. The criteria column contains a JSON
+-- object of filters used on the search page.
+create table if not exists public.saved_searches (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid references public.profiles (id) on delete cascade,
+  criteria jsonb not null,
+  created_at timestamp with time zone default now()
+);
+
+--
 -- Table: messages
 --
 -- Messages are used for enquiries and replies between users and agents.  Each message
@@ -103,6 +117,7 @@ alter table public.properties enable row level security;
 alter table public.property_images enable row level security;
 alter table public.favorites enable row level security;
 alter table public.messages enable row level security;
+alter table public.saved_searches enable row level security;
 
 --
 -- RLS Policies for profiles
@@ -214,6 +229,22 @@ for delete
 using (user_id = auth.uid());
 
 --
+-- RLS Policies for saved_searches
+--
+-- Users can view, create and delete their own saved searches.
+create policy "Users can view their saved searches" on public.saved_searches
+for select
+using (user_id = auth.uid());
+
+create policy "Users can save a search" on public.saved_searches
+for insert
+with check (user_id = auth.uid());
+
+create policy "Users can delete a saved search" on public.saved_searches
+for delete
+using (user_id = auth.uid());
+
+--
 -- RLS Policies for messages
 --
 -- Only participants in a conversation (sender or receiver) can view the messages.
@@ -265,10 +296,10 @@ values
   ('00000000-0000-4000-8000-000000000001', 'agent@example.com', 'Alice Agent', 'agent'),
   ('00000000-0000-4000-8000-000000000002', 'user@example.com', 'Bob Buyer', 'user');
 
-insert into public.properties (id, title, description, price, bedrooms, bathrooms, property_type, listing_type, latitude, longitude, address, city, postcode, floor_area, epc_rating, amenities, agent_id, created_at)
+insert into public.properties (id, title, description, price, bedrooms, bathrooms, property_type, listing_type, latitude, longitude, address, city, postcode, floor_area, epc_rating, property_age, tenure, amenities, agent_id, created_at)
 values
-  ('11111111-2222-4333-8444-555555555555', 'Spacious Family Home', 'A bright and spacious detached house with a large garden.', 750000, 4, 2, 'house', 'sale', 51.3761, -0.1318, '123 Sutton Road', 'Sutton', 'SM1 2AB', 150.0, 'C', ARRAY['garden','garage','driveway'], '00000000-0000-4000-8000-000000000001', now()),
-  ('22222222-3333-4444-8555-666666666666', 'Modern Flat in City Centre', 'A modern two‑bed flat close to transport links.', 1850, 2, 1, 'apartment', 'rent', 51.5155, -0.1426, '45 City Street', 'London', 'W1D 3JL', 60.0, 'B', ARRAY['balcony','lift'], '00000000-0000-4000-8000-000000000001', now());
+  ('11111111-2222-4333-8444-555555555555', 'Spacious Family Home', 'A bright and spacious detached house with a large garden.', 750000, 4, 2, 'house', 'sale', 51.3761, -0.1318, '123 Sutton Road', 'Sutton', 'SM1 2AB', 150.0, 'C', 10, 'freehold', ARRAY['garden','garage','driveway'], '00000000-0000-4000-8000-000000000001', now()),
+  ('22222222-3333-4444-8555-666666666666', 'Modern Flat in City Centre', 'A modern two‑bed flat close to transport links.', 1850, 2, 1, 'apartment', 'rent', 51.5155, -0.1426, '45 City Street', 'London', 'W1D 3JL', 60.0, 'B', 2, 'leasehold', ARRAY['balcony','lift'], '00000000-0000-4000-8000-000000000001', now());
 
 insert into public.property_images (id, property_id, url, ord)
 values
