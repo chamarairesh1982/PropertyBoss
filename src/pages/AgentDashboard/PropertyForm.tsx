@@ -40,6 +40,7 @@ export default function PropertyForm() {
   });
   const [floorPlan, setFloorPlan] = useState<File | null>(null);
   const [video, setVideo] = useState<File | null>(null);
+  const [photos, setPhotos] = useState<File[]>([]);
 
   // Load existing property if editing
   useEffect(() => {
@@ -101,6 +102,18 @@ export default function PropertyForm() {
 
   async function uploadMedia(propertyId: string) {
     const bucket = supabase.storage.from('property-media');
+    for (const file of photos) {
+      const path = `${propertyId}/photo-${Date.now()}-${file.name}`;
+      const { error } = await bucket.upload(path, file);
+      if (!error) {
+        const url = bucket.getPublicUrl(path).data.publicUrl;
+        await supabase.from('property_media').insert({
+          property_id: propertyId,
+          url,
+          type: 'photo',
+        });
+      }
+    }
     if (floorPlan) {
       const path = `${propertyId}/floor-${Date.now()}-${floorPlan.name}`;
       const { error } = await bucket.upload(path, floorPlan);
@@ -414,6 +427,18 @@ export default function PropertyForm() {
             value={form.amenities}
             onChange={handleChange}
             className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700" htmlFor="photos">
+            Property photos
+          </label>
+          <input
+            type="file"
+            id="photos"
+            multiple
+            onChange={(e) => setPhotos(Array.from(e.target.files ?? []))}
+            className="mt-1 block w-full text-sm"
           />
         </div>
         <div>
