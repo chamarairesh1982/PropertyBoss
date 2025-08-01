@@ -6,6 +6,7 @@ This project is a property listings portal inspired by popular real‑estate sit
 
 - **Browse and search properties** by location, price range, bedrooms, bathrooms, listing type and more.
 - **Property detail pages** with image galleries, descriptions, amenities, floor area, EPC rating and a contact form.
+- **Nearby schools and amenities** displayed on property pages using OpenStreetMap data cached via Supabase Edge Functions.
 - **Favourites**: authenticated users can save and remove favourite properties.
 - **Agent dashboard**: agents can create and edit their own listings, upload photos and respond to enquiries.
 - **Authentication** using Supabase’s email/password and magic‑link providers. A `profiles` table stores user roles (`user`, `agent`, `admin`).
@@ -51,7 +52,8 @@ this version, execute `supabase/update_v3.sql` as well.
 For the agent analytics and appointments features added in v4, run
 `supabase/update_v4.sql` after applying the earlier updates. To load the
 sample data used by the new calendar view, execute `supabase/update_v5.sql`
-after running the previous updates.
+after running the previous updates. To enable caching for nearby schools and
+amenities, apply `supabase/update_v6.sql` next.
 
 5. **Deploy the Edge Function**
 
