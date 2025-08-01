@@ -1,6 +1,13 @@
 import { serve } from '../deno_std_http_server.ts';
 import { createClient } from '../supabase_client.ts';
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
+
 async function incrementAttempt(
   supabase: ReturnType<typeof createClient>,
   identifier: string,
@@ -30,6 +37,9 @@ async function incrementAttempt(
 }
 
 serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
   const { email, password } = (await req.json()) as {
     email: string;
     password: string;
@@ -51,10 +61,13 @@ serve(async (req) => {
     60_000,
   );
   if (rate.blocked) {
-    return new Response(JSON.stringify({ error: 'Too many login attempts' }), {
-      status: 429,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ error: 'Too many login attempts' }),
+      {
+        status: 429,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      },
+    );
   }
 
   const anon = createClient(
@@ -65,10 +78,10 @@ serve(async (req) => {
   if (error || !data.session) {
     return new Response(JSON.stringify({ error: error?.message }), {
       status: 401,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
     });
   }
   return new Response(JSON.stringify({ session: data.session }), {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...corsHeaders },
   });
 });
