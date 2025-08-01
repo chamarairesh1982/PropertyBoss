@@ -3,6 +3,7 @@ import {
   useContext,
   useEffect,
   useCallback,
+  useRef,
   useState,
   ReactNode,
 } from 'react';
@@ -33,13 +34,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const lastLoadedId = useRef<string | undefined>();
 
   // Helper to load profile for current session
   const loadProfile = useCallback(async (sessionUserId: string | undefined) => {
     if (!sessionUserId) {
+      lastLoadedId.current = undefined;
       setUser(null);
       return;
     }
+    if (lastLoadedId.current === sessionUserId) {
+      return;
+    }
+    lastLoadedId.current = sessionUserId;
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
