@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabaseClient';
 import { useAuth } from './useAuth';
 import type { Database } from '../types/supabase';
 
-type Appointment = Database['public']['Tables']['appointments']['Row'] & {
+export type Appointment = Database['public']['Tables']['appointments']['Row'] & {
   property?: { title: string | null };
   user?: { full_name: string | null };
 };

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAddAppointment } from '../hooks/useAppointments';
 import { useAuth } from '../hooks/useAuth';
+import { Link } from 'react-router-dom';
 
 const schema = z.object({
   timeslot: z.string().min(1),
@@ -25,7 +26,16 @@ export default function AppointmentForm({ propertyId, agentId }: { propertyId: s
     reset();
   }
 
-  if (!user) return null;
+  if (!user)
+    return (
+      <p>
+        Please{' '}
+        <Link to="/login" className="text-blue-600 underline">
+          sign in
+        </Link>{' '}
+        to request a viewing.
+      </p>
+    );
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 max-w-md">
