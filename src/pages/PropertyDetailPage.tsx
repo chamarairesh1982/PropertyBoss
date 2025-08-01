@@ -11,7 +11,10 @@ import ReviewList from '../components/ReviewList';
 import ReviewForm from '../components/ReviewForm';
 import AppointmentForm from '../components/AppointmentForm';
 import { useReviews } from '../hooks/useReviews';
-import { useFavoriteLists, useAddPropertyToList } from '../hooks/useFavoriteLists';
+import {
+  useFavoriteLists,
+  useAddPropertyToList,
+} from '../hooks/useFavoriteLists';
 import { useComparison } from '../hooks/useComparison';
 
 interface RouteParams {
@@ -231,7 +234,9 @@ export default function PropertyDetailPage() {
         )}
         {user && lists && (
           <div>
-            <label htmlFor="favlist" className="mr-2 text-sm">Save to list:</label>
+            <label htmlFor="favlist" className="mr-2 text-sm">
+              Save to list:
+            </label>
             <select
               id="favlist"
               className="border p-1"
@@ -307,7 +312,11 @@ export default function PropertyDetailPage() {
         <h3 className="text-lg font-semibold mb-2">Contact agent</h3>
         {user ? (
           <form onSubmit={handleSubmit} className="space-y-2 max-w-md">
+            <label htmlFor="message" className="block text-sm font-medium">
+              Your message
+            </label>
             <textarea
+              id="message"
               name="message"
               className="w-full h-32 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Write a message to the agent..."
@@ -339,7 +348,10 @@ export default function PropertyDetailPage() {
           </p>
         )}
       </div>
-      <AppointmentForm propertyId={property.id} agentId={property.agent?.id ?? ''} />
+      <AppointmentForm
+        propertyId={property.id}
+        agentId={property.agent?.id ?? ''}
+      />
       {/* Reviews */}
       <div>
         <h3 className="text-lg font-semibold mb-2">

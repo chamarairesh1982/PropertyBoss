@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { useFavorites, useToggleFavorite } from '../hooks/useFavorites';
 import { useAuth } from '../hooks/useAuth';
 import { useComparison } from '../hooks/useComparison';
+import { useQueryClient } from '@tanstack/react-query';
+import { supabase } from '../lib/supabaseClient';
 import type { Database } from '../types/supabase';
 
 type Property = Database['public']['Tables']['properties']['Row'] & {
@@ -24,6 +26,24 @@ export default function PropertyCard({ property }: Props) {
   const isFavourited = favourites?.includes(property.id);
   const { selected, toggle: toggleCompare } = useComparison();
   const inCompare = selected.includes(property.id);
+  const queryClient = useQueryClient();
+
+  function prefetch() {
+    queryClient.prefetchQuery({
+      queryKey: ['property', property.id],
+      queryFn: async () => {
+        const { data, error } = await supabase
+          .from('properties')
+          .select(
+            `*, property_media!property_id(url, type, ord), agent:agent_id(full_name, email, id)`,
+          )
+          .eq('id', property.id)
+          .single();
+        if (error) throw new Error(error.message);
+        return data;
+      },
+    });
+  }
 
   const firstImage =
     property.property_media?.find((m) => m.type === 'photo') || null;
@@ -43,6 +63,8 @@ export default function PropertyCard({ property }: Props) {
   return (
     <Link
       to={`/properties/${property.id}`}
+      onMouseEnter={prefetch}
+      onFocus={prefetch}
       className="bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden flex flex-col"
     >
       {firstImage ? (
@@ -57,7 +79,9 @@ export default function PropertyCard({ property }: Props) {
         </div>
       )}
       <div className="p-4 flex-1 flex flex-col">
-        <h3 className="text-lg font-semibold mb-1 truncate">{property.title}</h3>
+        <h3 className="text-lg font-semibold mb-1 truncate">
+          {property.title}
+        </h3>
         <p className="text-sm text-gray-600 mb-2 truncate">
           {property.city || property.address || '—'}
         </p>
@@ -77,18 +101,26 @@ export default function PropertyCard({ property }: Props) {
               <button
                 onClick={handleToggle}
                 className="p-2 rounded-full hover:bg-gray-100"
-                title={isFavourited ? 'Remove from favourites' : 'Save to favourites'}
+                title={
+                  isFavourited ? 'Remove from favourites' : 'Save to favourites'
+                }
               >
                 {isFavourited ? (
-                  <span role="img" aria-label="favourited">❤️</span>
+                  <span role="img" aria-label="favourited">
+                    ❤️
+                  </span>
                 ) : (
-                  <span role="img" aria-label="not favourited">🤍</span>
+                  <span role="img" aria-label="not favourited">
+                    🤍
+                  </span>
                 )}
               </button>
               <button
                 onClick={handleCompare}
                 className="p-2 rounded-full hover:bg-gray-100"
-                title={inCompare ? 'Remove from comparison' : 'Add to comparison'}
+                title={
+                  inCompare ? 'Remove from comparison' : 'Add to comparison'
+                }
               >
                 {inCompare ? '✓' : '≣'}
               </button>
