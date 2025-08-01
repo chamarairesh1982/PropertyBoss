@@ -27,7 +27,7 @@ export default function AgentDashboard() {
       if (!user) return [] as Property[];
       const { data, error } = await supabase
         .from('properties')
-        .select('*, property_images!property_id(url, ord)')
+        .select('*, property_media!property_id(url, type, ord)')
         .eq('agent_id', user.id)
         .order('created_at', { ascending: false });
       if (error) throw new Error(error.message);

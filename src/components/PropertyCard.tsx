@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import type { Database } from '../types/supabase';
 
 type Property = Database['public']['Tables']['properties']['Row'] & {
-  property_images?: { url: string; ord: number | null }[];
+  property_media?: { url: string; type: string; ord: number | null }[];
 };
 
 interface Props {
@@ -22,7 +22,8 @@ export default function PropertyCard({ property }: Props) {
   const toggleFavourite = useToggleFavorite();
   const isFavourited = favourites?.includes(property.id);
 
-  const firstImage = property.property_images && property.property_images[0];
+  const firstImage =
+    property.property_media?.find((m) => m.type === 'photo') || null;
 
   async function handleToggle(e: React.MouseEvent) {
     e.preventDefault();

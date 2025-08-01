@@ -2,7 +2,7 @@ import type { Database } from '../types/supabase';
 import PropertyCard from './PropertyCard';
 
 type PropertyWithImages = Database['public']['Tables']['properties']['Row'] & {
-  property_images?: { url: string; ord: number | null }[];
+  property_media?: { url: string; type: string; ord: number | null }[];
 };
 
 interface Props {
