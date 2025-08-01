@@ -12,6 +12,7 @@ This project is a property listings portal inspired by popular real‑estate sit
 - **Authentication** using Supabase’s email/password and magic‑link providers. A `profiles` table stores user roles (`user`, `agent`, `admin`).
 - **Messaging**: users can send messages to agents about a property; agents can read and reply.
 - **Row Level Security** policies are implemented to ensure users only read and modify the data they are authorised to access.
+- **Interactive map of search results** using Leaflet with marker clustering.
 
 ## Getting started
 
@@ -23,6 +24,8 @@ This project is a property listings portal inspired by popular real‑estate sit
    ```
 
 2. **Install dependencies**
+
+   The project uses Leaflet for the map view so be sure all npm packages are installed:
 
    ```bash
    npm install
