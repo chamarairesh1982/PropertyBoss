@@ -302,6 +302,49 @@ export interface Database {
           },
         ];
       };
+      reviews: {
+        Row: {
+          id: string;
+          property_id: string | null;
+          user_id: string | null;
+          rating: number;
+          comment: string | null;
+          created_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          property_id: string;
+          user_id: string;
+          rating: number;
+          comment?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          property_id?: string;
+          user_id?: string;
+          rating?: number;
+          comment?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reviews_property_id_fkey';
+            columns: ['property_id'];
+            referencedRelation: 'properties';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reviews_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

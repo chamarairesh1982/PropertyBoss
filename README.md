@@ -1,6 +1,6 @@
 # Property Portal
 
-This project is a property listings portal inspired by popular real‑estate sites.  It has been built using **React**, **TypeScript**, **Vite**, **Tailwind CSS**, **React Query** and **Supabase**.  The goal of this portal is to provide a solid foundation for browsing, searching and managing property listings, while demonstrating how to integrate client‑side code with Supabase for authentication, storage and row‑level security.
+This project is a property listings portal inspired by popular real‑estate sites. It has been built using **React**, **TypeScript**, **Vite**, **Tailwind CSS**, **React Query** and **Supabase**. The goal of this portal is to provide a solid foundation for browsing, searching and managing property listings, while demonstrating how to integrate client‑side code with Supabase for authentication, storage and row‑level security.
 
 ## Features
 
@@ -8,7 +8,7 @@ This project is a property listings portal inspired by popular real‑estate sit
 - **Property detail pages** with image galleries, descriptions, amenities, floor area, EPC rating and a contact form.
 - **Favourites**: authenticated users can save and remove favourite properties.
 - **Agent dashboard**: agents can create and edit their own listings, upload photos and respond to enquiries.
-- **Authentication** using Supabase’s email/password and magic‑link providers.  A `profiles` table stores user roles (`user`, `agent`, `admin`).
+- **Authentication** using Supabase’s email/password and magic‑link providers. A `profiles` table stores user roles (`user`, `agent`, `admin`).
 - **Messaging**: users can send messages to agents about a property; agents can read and reply.
 - **Row Level Security** policies are implemented to ensure users only read and modify the data they are authorised to access.
 
@@ -38,15 +38,16 @@ This project is a property listings portal inspired by popular real‑estate sit
 
 4. **Run database migrations**
 
-   The `supabase/seed.sql` file contains the schema definitions, RLS policies and a small amount of seed data.  Use the Supabase SQL editor or `psql` to run this file against your project:
+   The `supabase/seed.sql` file contains the schema definitions, RLS policies and a small amount of seed data. Use the Supabase SQL editor or `psql` to run this file against your project:
 
-  ```bash
-  supabase db push supabase/seed.sql
-  # or open supabase/seed.sql in the SQL editor and run it
-  ```
+```bash
+supabase db push supabase/seed.sql
+# or open supabase/seed.sql in the SQL editor and run it
+```
 
-   If you already applied the initial seed you can run `supabase/update_v2.sql`
-   to add the new tables and policies.
+If you already applied the initial seed you can run `supabase/update_v2.sql`
+to add the previous tables and policies. For the reviews feature introduced in
+this version, execute `supabase/update_v3.sql` as well.
 
 5. **Deploy the Edge Function**
 
@@ -67,7 +68,7 @@ This project is a property listings portal inspired by popular real‑estate sit
 
 ## Folder structure
 
-This repository uses a simple and flat folder structure.  The most important directories are:
+This repository uses a simple and flat folder structure. The most important directories are:
 
 ```
 property-portal/
@@ -85,8 +86,8 @@ property-portal/
 
 ## Testing
 
-Basic end‑to‑end smoke tests can be written using **Cypress** or **Playwright**.  A simple example configuration is included under the `cypress/` and `playwright.config.js` folders.  Running `npm run test:e2e` will execute those tests.  Refer to the respective frameworks’ documentation for more details.
+Basic end‑to‑end smoke tests can be written using **Cypress** or **Playwright**. A simple example configuration is included under the `cypress/` and `playwright.config.js` folders. Running `npm run test:e2e` will execute those tests. Refer to the respective frameworks’ documentation for more details.
 
 ## License
 
-This project is provided for educational purposes and comes with no warranty.  You are free to modify and extend it to suit your own needs.
+This project is provided for educational purposes and comes with no warranty. You are free to modify and extend it to suit your own needs.
