@@ -17,10 +17,52 @@ create table if not exists public.appointments (
   property_id uuid references public.properties(id) on delete cascade,
   user_id uuid references public.profiles(id) on delete cascade,
   agent_id uuid references public.profiles(id) on delete cascade,
-  timeslot timestamp with time zone not null,
-  status text not null default 'pending' check (status in ('pending','confirmed','cancelled')),
+  starts_at timestamp with time zone not null,
+  ends_at timestamp with time zone not null,
+  status text not null default 'pending' check (status in ('pending','approved','declined')),
   created_at timestamp with time zone default now()
 );
+
+-- Migrate legacy appointments schema if needed
+alter table public.appointments
+  add column if not exists starts_at timestamp with time zone,
+  add column if not exists ends_at timestamp with time zone;
+
+do $$
+begin
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'appointments'
+      and column_name = 'timeslot'
+  ) then
+    update public.appointments
+      set starts_at = timeslot,
+          ends_at = timeslot + interval '1 hour'
+      where starts_at is null;
+
+    alter table public.appointments
+      drop column timeslot;
+  end if;
+end $$;
+
+alter table public.appointments
+  alter column starts_at set not null,
+  alter column ends_at set not null;
+
+update public.appointments set status = 'approved' where status = 'confirmed';
+update public.appointments set status = 'declined' where status = 'cancelled';
+
+alter table public.appointments
+  drop constraint if exists appointments_status_check;
+
+alter table public.appointments
+  add constraint appointments_status_check
+    check (status in ('pending','approved','declined'));
+
+alter table public.appointments
+  alter column status set default 'pending';
 
 alter table public.listing_stats enable row level security;
 alter table public.appointments enable row level security;
