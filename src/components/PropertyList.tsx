@@ -15,10 +15,10 @@ interface Props {
  */
 export default function PropertyList({ properties }: Props) {
   if (!properties || properties.length === 0) {
-    return <p className="p-4 text-gray-500">No properties found.</p>;
+    return <p className="p-md text-secondary">No properties found.</p>;
   }
   return (
-    <div className="grid gap-6 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div className="grid gap-lg p-md sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {properties.map((p) => (
         <PropertyCard key={p.id} property={p} />
       ))}

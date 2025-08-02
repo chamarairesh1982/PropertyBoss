@@ -15,7 +15,7 @@ export default function LineChart({ data }: { data: DataPoint[] }) {
     })
     .join(' ');
   return (
-    <svg viewBox="0 0 100 100" className="w-full h-32 text-blue-600">
+    <svg viewBox="0 0 100 100" className="w-full h-32 text-primary">
       <polyline
         fill="none"
         stroke="currentColor"

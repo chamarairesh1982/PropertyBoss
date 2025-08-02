@@ -25,14 +25,14 @@ export default function ReviewForm({ propertyId }: { propertyId: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-sm">
       <div>
-        <label className="block text-sm font-medium" htmlFor="rating">
+        <label className="block text-sm font-medium text-secondary" htmlFor="rating">
           Rating
         </label>
         <select
           id="rating"
-          className="border rounded w-full p-2"
+          className="border rounded w-full p-sm"
           {...register('rating', { valueAsNumber: true })}
         >
           {[1, 2, 3, 4, 5].map((n) => (
@@ -46,12 +46,12 @@ export default function ReviewForm({ propertyId }: { propertyId: string }) {
         )}
       </div>
       <div>
-        <label className="block text-sm font-medium" htmlFor="comment">
+        <label className="block text-sm font-medium text-secondary" htmlFor="comment">
           Comment
         </label>
         <textarea
           id="comment"
-          className="border rounded w-full p-2"
+          className="border rounded w-full p-sm"
           {...register('comment')}
           rows={3}
         />
@@ -62,7 +62,7 @@ export default function ReviewForm({ propertyId }: { propertyId: string }) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        className="bg-primary text-background px-md py-sm rounded hover:bg-primary/80 disabled:opacity-50"
       >
         {isSubmitting ? 'Saving…' : 'Submit Review'}
       </button>

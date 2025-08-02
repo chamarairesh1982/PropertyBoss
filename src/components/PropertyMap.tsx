@@ -63,9 +63,9 @@ export default function PropertyMap({ properties }: Props) {
               <Popup>
                 <div className="text-center">
                   {first && (
-                    <img src={first.url} alt="thumbnail" className="w-32 h-20 object-cover mb-1" />
+                    <img src={first.url} alt="thumbnail" className="w-32 h-20 object-cover mb-xs" />
                   )}
-                  <Link to={`/properties/${p.id}`} className="text-blue-600 underline">
+                  <Link to={`/properties/${p.id}`} className="text-primary underline">
                     {p.title}
                   </Link>
                 </div>

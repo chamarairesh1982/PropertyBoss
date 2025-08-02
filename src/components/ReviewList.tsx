@@ -13,13 +13,13 @@ export default function ReviewList({ propertyId }: Props) {
     return <p>Loading reviews…</p>;
   }
   if (!reviews || reviews.length === 0) {
-    return <p className="text-gray-500">No reviews yet.</p>;
+    return <p className="text-secondary">No reviews yet.</p>;
   }
 
   return (
-    <ul className="space-y-4">
+    <ul className="space-y-md">
       {reviews.map((r) => (
-        <li key={r.id} className="border-b pb-2">
+        <li key={r.id} className="border-b pb-sm">
           <div className="flex justify-between items-center">
             <p className="font-medium">
               {r.profiles?.full_name || 'Anon'} – {r.rating}/5
@@ -34,7 +34,7 @@ export default function ReviewList({ propertyId }: Props) {
             )}
           </div>
           {r.comment && (
-            <p className="text-gray-700 text-sm">{sanitizeHtml(r.comment)}</p>
+            <p className="text-secondary text-sm">{sanitizeHtml(r.comment)}</p>
           )}
         </li>
       ))}
