@@ -441,7 +441,8 @@ export interface Database {
           property_id: string | null;
           user_id: string | null;
           agent_id: string | null;
-          timeslot: string;
+          starts_at: string;
+          ends_at: string;
           status: string;
           created_at: string | null;
         };
@@ -450,7 +451,8 @@ export interface Database {
           property_id: string;
           user_id: string;
           agent_id: string;
-          timeslot: string;
+          starts_at: string;
+          ends_at: string;
           status?: string;
           created_at?: string | null;
         };
@@ -459,7 +461,8 @@ export interface Database {
           property_id?: string;
           user_id?: string;
           agent_id?: string;
-          timeslot?: string;
+          starts_at?: string;
+          ends_at?: string;
           status?: string;
           created_at?: string | null;
         };

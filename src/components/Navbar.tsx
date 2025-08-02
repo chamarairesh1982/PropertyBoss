@@ -61,6 +61,14 @@ export default function Navbar() {
               Compare
             </Link>
           )}
+          {user && (
+            <Link
+              to="/my-appointments"
+              className="text-secondary hover:text-primary hidden sm:inline"
+            >
+              My Appointments
+            </Link>
+          )}
           {user?.role === 'agent' && (
             <Link
               to="/agent"

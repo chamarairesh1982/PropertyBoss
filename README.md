@@ -18,7 +18,7 @@ The interface now uses a token based theme with a refined colour palette and typ
 - **Messaging**: users can send messages to agents about a property; agents can read and reply.
 - **Row Level Security** policies are implemented to ensure users only read and modify the data they are authorised to access.
 - **Rate limiting** on login and enquiry submissions helps block abuse.
-- **Viewing appointments**: users can request a viewing and agents manage their schedule in a calendar view.
+- **Appointment scheduling**: users request viewing slots, agents approve or decline them, and both parties see updates in real time with calendar views on their dashboards.
 - **Mortgage calculator**: estimate monthly repayments with adjustable deposit and term on property pages.
 - **Area guides**: dedicated pages show average prices, demographics and amenities for a city or postcode via a Supabase Edge Function.
 
@@ -74,6 +74,8 @@ Rate limiting and audit logging added in v9 and v10 require running
 `supabase/update_v9.sql` and `supabase/update_v10.sql` respectively.
 For the area guides feature introduced in v11, apply
 `supabase/update_v11.sql` after the earlier updates.
+For the appointment scheduling upgrades introduced in v12, run
+`supabase/update_v12.sql` after applying the previous updates.
 
 5. **Deploy the Edge Function**
 

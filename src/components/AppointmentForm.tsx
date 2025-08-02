@@ -5,13 +5,25 @@ import { useAddAppointment } from '../hooks/useAppointments';
 import { useAuth } from '../hooks/useAuth';
 import { Link } from 'react-router-dom';
 
-const schema = z.object({
-  timeslot: z.string().min(1),
-});
+const schema = z
+  .object({
+    starts_at: z.string().min(1),
+    ends_at: z.string().min(1),
+  })
+  .refine((data) => new Date(data.ends_at) > new Date(data.starts_at), {
+    message: 'End time must be after start time',
+    path: ['ends_at'],
+  });
 
 type FormData = z.infer<typeof schema>;
 
-export default function AppointmentForm({ propertyId, agentId }: { propertyId: string; agentId: string }) {
+export default function AppointmentForm({
+  propertyId,
+  agentId,
+}: {
+  propertyId: string;
+  agentId: string;
+}) {
   const { user } = useAuth();
   const {
     register,
@@ -22,7 +34,10 @@ export default function AppointmentForm({ propertyId, agentId }: { propertyId: s
   const add = useAddAppointment(propertyId, agentId);
 
   async function onSubmit(data: FormData) {
-    await add.mutateAsync({ timeslot: new Date(data.timeslot) });
+    await add.mutateAsync({
+      starts_at: new Date(data.starts_at),
+      ends_at: new Date(data.ends_at),
+    });
     reset();
   }
 
@@ -40,16 +55,32 @@ export default function AppointmentForm({ propertyId, agentId }: { propertyId: s
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-sm max-w-md">
       <div>
-        <label htmlFor="timeslot" className="block text-sm font-medium text-secondary">
-          Select time
+        <label htmlFor="starts_at" className="block text-sm font-medium text-secondary">
+          Start time
         </label>
         <input
           type="datetime-local"
-          id="timeslot"
+          id="starts_at"
           className="border rounded w-full p-sm"
-          {...register('timeslot')}
+          {...register('starts_at')}
         />
-        {errors.timeslot && <p className="text-red-600 text-sm">Please choose a time</p>}
+        {errors.starts_at && (
+          <p className="text-red-600 text-sm">Please choose a start time</p>
+        )}
+      </div>
+      <div>
+        <label htmlFor="ends_at" className="block text-sm font-medium text-secondary">
+          End time
+        </label>
+        <input
+          type="datetime-local"
+          id="ends_at"
+          className="border rounded w-full p-sm"
+          {...register('ends_at')}
+        />
+        {errors.ends_at && (
+          <p className="text-red-600 text-sm">{errors.ends_at.message}</p>
+        )}
       </div>
       <button
         type="submit"

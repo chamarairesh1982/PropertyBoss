@@ -175,14 +175,14 @@ create table if not exists public.listing_stats (
 --
 -- Table: appointments
 --
--- Viewing appointments requested by users. Agents confirm or cancel them.
 create table if not exists public.appointments (
   id uuid primary key default uuid_generate_v4(),
   property_id uuid references public.properties(id) on delete cascade,
   user_id uuid references public.profiles(id) on delete cascade,
   agent_id uuid references public.profiles(id) on delete cascade,
-  timeslot timestamp with time zone not null,
-  status text not null default 'pending' check (status in ('pending','confirmed','cancelled')),
+  starts_at timestamp with time zone not null,
+  ends_at timestamp with time zone not null,
+  status text not null default 'pending' check (status in ('pending','approved','declined')),
   created_at timestamp with time zone default now()
 );
 
@@ -687,13 +687,13 @@ values (
   '11111111-2222-4333-8444-555555555555'
 );
 
--- demo appointment
-insert into public.appointments(id, property_id, user_id, agent_id, timeslot, status)
+insert into public.appointments(id, property_id, user_id, agent_id, starts_at, ends_at, status)
 values (
   uuid_generate_v4(),
   '11111111-2222-4333-8444-555555555555',
   '00000000-0000-4000-8000-000000000002',
   '00000000-0000-4000-8000-000000000001',
   now() + interval '2 days',
-  'confirmed'
+  now() + interval '2 days 1 hour',
+  'approved'
 );
