@@ -211,6 +211,16 @@ create table if not exists public.rate_limits (
 );
 
 --
+-- Table: area_guides
+--
+-- Caches area guide data fetched from external APIs.
+create table if not exists public.area_guides (
+  area text primary key,
+  data jsonb not null,
+  updated_at timestamp with time zone default now()
+);
+
+--
 -- Table: audit_logs
 --
 -- Stores a history of changes to sensitive tables.
@@ -237,6 +247,7 @@ alter table public.saved_searches enable row level security;
 alter table public.reviews enable row level security;
 alter table public.listing_stats enable row level security;
 alter table public.appointments enable row level security;
+alter table public.area_guides enable row level security;
 
 --
 -- RLS Policies for profiles
@@ -471,6 +482,18 @@ with check (agent_id = auth.uid());
 
 create policy "Participants can delete appointments" on public.appointments
 for delete using (user_id = auth.uid() or agent_id = auth.uid());
+
+--
+-- RLS Policies for area_guides
+-- Public can view area guide information. Only the service role may modify it.
+create policy "Area guides are viewable by everyone" on public.area_guides
+  for select using (true);
+
+create policy "Service role can manage area guides" on public.area_guides
+  for insert with check (auth.role() = 'service_role');
+
+create policy "Service role can manage area guides" on public.area_guides
+  for update using (auth.role() = 'service_role');
 
 --
 -- Trigger to update properties.has_photo whenever images are added or removed.

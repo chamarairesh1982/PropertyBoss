@@ -19,6 +19,8 @@ The interface now uses a token based theme with a refined colour palette and typ
 - **Row Level Security** policies are implemented to ensure users only read and modify the data they are authorised to access.
 - **Rate limiting** on login and enquiry submissions helps block abuse.
 - **Viewing appointments**: users can request a viewing and agents manage their schedule in a calendar view.
+- **Mortgage calculator**: estimate monthly repayments with adjustable deposit and term on property pages.
+- **Area guides**: dedicated pages show average prices, demographics and amenities for a city or postcode via a Supabase Edge Function.
 
 ## Getting started
 
@@ -68,14 +70,20 @@ For favourite lists and comparison support added in v7, run
 `supabase/update_v7.sql` after applying the earlier updates.
 To refresh derived data for existing rows, execute `supabase/update_v8.sql`
 after running the previous updates.
+Rate limiting and audit logging added in v9 and v10 require running
+`supabase/update_v9.sql` and `supabase/update_v10.sql` respectively.
+For the area guides feature introduced in v11, apply
+`supabase/update_v11.sql` after the earlier updates.
 
 5. **Deploy the Edge Function**
 
    The `supabase/functions/nearby` function caches queries to OpenStreetMap for
-   nearby schools and amenities.
+   nearby schools and amenities. The `supabase/functions/area-guide` function
+   fetches demographic and pricing data for area guide pages.
 
    ```bash
    supabase functions deploy nearby
+   supabase functions deploy area-guide
    ```
 
 6. **Start the development server**
