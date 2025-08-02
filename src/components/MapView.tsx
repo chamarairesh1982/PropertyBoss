@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import type { Database } from '../types/db';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -24,10 +23,7 @@ interface Props {
   properties: Property[];
 }
 
-export default function PropertyMap({ properties }: Props) {
-  const navigate = useNavigate();
-  const [activeId, setActiveId] = useState<string | null>(null);
-
+export default function MapView({ properties }: Props) {
   const center = properties.length
     ? [properties[0].latitude ?? 51.505, properties[0].longitude ?? -0.09]
     : [51.505, -0.09];
@@ -47,19 +43,7 @@ export default function PropertyMap({ properties }: Props) {
           if (p.latitude == null || p.longitude == null) return null;
           const first = p.property_media?.find((m) => m.type === 'photo');
           return (
-            <Marker
-              key={p.id}
-              position={[p.latitude, p.longitude] as L.LatLngExpression}
-              eventHandlers={{
-                click: () => {
-                  if (activeId === p.id) {
-                    navigate(`/properties/${p.id}`);
-                  } else {
-                    setActiveId(p.id);
-                  }
-                },
-              }}
-            >
+            <Marker key={p.id} position={[p.latitude, p.longitude] as L.LatLngExpression}>
               <Popup>
                 <div className="text-center">
                   {first && (
