@@ -1,7 +1,20 @@
 import { serve } from '../deno_std_http_server.ts';
 import { createClient } from '../supabase_client.ts';
 
+function corsHeaders(req: Request) {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers':
+      req.headers.get('access-control-request-headers') ??
+      'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  } as Record<string, string>;
+}
+
 serve(async (req: Request) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders(req) });
+  }
   const { lat, lon } = (await req.json()) as { lat: number; lon: number };
 
   const supabase = createClient(
@@ -21,7 +34,7 @@ serve(async (req: Request) => {
 
   if (cached) {
     return new Response(JSON.stringify({ results: cached.results }), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...corsHeaders(req) },
     });
   }
 
@@ -46,6 +59,6 @@ serve(async (req: Request) => {
   });
 
   return new Response(JSON.stringify({ results }), {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...corsHeaders(req) },
   });
 });
