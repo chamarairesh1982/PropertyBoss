@@ -1,17 +1,14 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from './useAuth';
 import type { Database } from '../types/supabase';
 
-export type Appointment = Database['public']['Tables']['appointments']['Row'] & {
-  property?: { title: string | null };
-  user?: { full_name: string | null };
-};
+export type Appointment =
+  Database['public']['Tables']['appointments']['Row'] & {
+    property?: { title: string | null };
+    user?: { full_name: string | null };
+  };
 
 export function useAgentAppointments() {
   const { user } = useAuth();
@@ -29,7 +26,9 @@ export function useAgentAppointments() {
           filter: `agent_id=eq.${user.id}`,
         },
         () => {
-          queryClient.invalidateQueries({ queryKey: ['appointments', user.id] });
+          queryClient.invalidateQueries({
+            queryKey: ['appointments', user.id],
+          });
         },
       )
       .subscribe();
@@ -43,7 +42,9 @@ export function useAgentAppointments() {
       if (!user) return [] as Appointment[];
       const { data, error } = await supabase
         .from('appointments')
-        .select('*, property:property_id(title), user:user_id(full_name)')
+        .select(
+          'id, property_id, user_id, agent_id, starts_at, ends_at, status, created_at, property:property_id(title), user:user_id(full_name)',
+        )
         .eq('agent_id', user.id)
         .order('starts_at');
       if (error) throw new Error(error.message);
@@ -69,7 +70,9 @@ export function useUserAppointments() {
           filter: `user_id=eq.${user.id}`,
         },
         () => {
-          queryClient.invalidateQueries({ queryKey: ['user-appointments', user.id] });
+          queryClient.invalidateQueries({
+            queryKey: ['user-appointments', user.id],
+          });
         },
       )
       .subscribe();
@@ -83,7 +86,9 @@ export function useUserAppointments() {
       if (!user) return [] as Appointment[];
       const { data, error } = await supabase
         .from('appointments')
-        .select('*, property:property_id(title), user:user_id(full_name)')
+        .select(
+          'id, property_id, user_id, agent_id, starts_at, ends_at, status, created_at, property:property_id(title), user:user_id(full_name)',
+        )
         .eq('user_id', user.id)
         .order('starts_at');
       if (error) throw new Error(error.message);
@@ -111,7 +116,9 @@ export function useAddAppointment(propertyId: string, agentId: string) {
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['appointments', agentId] });
-        queryClient.invalidateQueries({ queryKey: ['user-appointments', user?.id] });
+        queryClient.invalidateQueries({
+          queryKey: ['user-appointments', user?.id],
+        });
       },
     },
   );
@@ -120,7 +127,13 @@ export function useAddAppointment(propertyId: string, agentId: string) {
 export function useUpdateAppointment() {
   const queryClient = useQueryClient();
   return useMutation(
-    async ({ id, status }: { id: string; status: 'approved' | 'declined' | 'pending' }) => {
+    async ({
+      id,
+      status,
+    }: {
+      id: string;
+      status: 'approved' | 'declined' | 'pending';
+    }) => {
       const { error } = await supabase
         .from('appointments')
         .update({ status })
