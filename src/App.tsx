@@ -11,6 +11,7 @@ import FavoriteListsPage from './pages/FavoriteListsPage';
 import ComparePage from './pages/ComparePage';
 import SavedSearchesPage from './pages/SavedSearchesPage';
 import AreaGuidePage from './pages/AreaGuidePage';
+import MyAppointmentsPage from './pages/MyAppointmentsPage';
 
 /**
  * Root component for the application.  It defines the top level layout
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/lists" element={<FavoriteListsPage />} />
           <Route path="/saved-searches" element={<SavedSearchesPage />} />
           <Route path="/compare" element={<ComparePage />} />
+          <Route path="/my-appointments" element={<MyAppointmentsPage />} />
           <Route path="/areas/:area" element={<AreaGuidePage />} />
         </Routes>
       </main>
