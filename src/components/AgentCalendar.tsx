@@ -49,18 +49,18 @@ export default function AgentCalendar({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-2">
-        <button onClick={prevMonth} className="px-2 py-1 border rounded">
+      <div className="flex items-center justify-between mb-sm">
+        <button onClick={prevMonth} className="px-sm py-xs border rounded">
           Prev
         </button>
         <div className="font-semibold">
           {month.toLocaleString(undefined, { month: 'long', year: 'numeric' })}
         </div>
-        <button onClick={nextMonth} className="px-2 py-1 border rounded">
+        <button onClick={nextMonth} className="px-sm py-xs border rounded">
           Next
         </button>
       </div>
-      <div className="grid grid-cols-7 text-center font-semibold mb-1">
+      <div className="grid grid-cols-7 text-center font-semibold mb-xs">
         <div>Mon</div>
         <div>Tue</div>
         <div>Wed</div>
@@ -78,13 +78,13 @@ export default function AgentCalendar({
             <div
               key={idx}
               className={clsx(
-                'border-b border-r h-24 p-1 text-xs',
-                !isSameMonth(day, month) && 'bg-gray-50 text-gray-400',
+                'border-b border-r h-24 p-xs text-xs',
+                !isSameMonth(day, month) && 'bg-surface text-secondary',
               )}
             >
               <div className="font-semibold">{day.getDate()}</div>
               {items.map((a) => (
-                <div key={a.id} className="bg-blue-100 rounded mt-0.5 px-1">
+                <div key={a.id} className="bg-primary/20 rounded mt-0.5 px-xs">
                   {new Date(a.timeslot).toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',

@@ -17,22 +17,22 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Link to="/" className="text-xl font-semibold text-blue-600">
+    <nav className="bg-background border-b border-surface shadow-sm sticky top-0 z-10">
+      <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl flex h-16 items-center justify-between">
+        <div className="flex items-center space-x-md">
+          <Link to="/" className="text-xl font-semibold text-primary font-heading">
             Property Portal
           </Link>
           <Link
             to="/"
-            className="text-gray-700 hover:text-blue-600 hidden sm:inline"
+            className="text-secondary hover:text-primary hidden sm:inline"
           >
             Browse
           </Link>
           {user && (
             <Link
               to="/favorites"
-              className="text-gray-700 hover:text-blue-600 hidden sm:inline"
+              className="text-secondary hover:text-primary hidden sm:inline"
             >
               Favourites
             </Link>
@@ -40,7 +40,7 @@ export default function Navbar() {
           {user && (
             <Link
               to="/lists"
-              className="text-gray-700 hover:text-blue-600 hidden sm:inline"
+              className="text-secondary hover:text-primary hidden sm:inline"
             >
               Lists
             </Link>
@@ -48,7 +48,7 @@ export default function Navbar() {
           {user && (
             <Link
               to="/saved-searches"
-              className="text-gray-700 hover:text-blue-600 hidden sm:inline"
+              className="text-secondary hover:text-primary hidden sm:inline"
             >
               Saved Searches
             </Link>
@@ -56,7 +56,7 @@ export default function Navbar() {
           {user && (
             <Link
               to="/compare"
-              className="text-gray-700 hover:text-blue-600 hidden sm:inline"
+              className="text-secondary hover:text-primary hidden sm:inline"
             >
               Compare
             </Link>
@@ -64,7 +64,7 @@ export default function Navbar() {
           {user?.role === 'agent' && (
             <Link
               to="/agent"
-              className="text-gray-700 hover:text-blue-600 hidden sm:inline"
+              className="text-secondary hover:text-primary hidden sm:inline"
             >
               Agent Dashboard
             </Link>
@@ -74,14 +74,14 @@ export default function Navbar() {
           {user ? (
             <button
               onClick={handleSignOut}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700"
+              className="bg-primary text-background px-md py-sm rounded-md text-sm hover:bg-primary/80"
             >
               Sign out
             </button>
           ) : (
             <Link
               to="/login"
-              className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700"
+              className="bg-primary text-background px-md py-sm rounded-md text-sm hover:bg-primary/80"
             >
               Sign in
             </Link>

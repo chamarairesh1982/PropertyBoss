@@ -55,7 +55,7 @@ export default function PropertyCard({ property }: Props) {
       to={`/properties/${property.id}`}
       onMouseEnter={prefetch}
       onFocus={prefetch}
-      className="relative bg-white rounded-lg shadow hover:shadow-lg transform hover:scale-[1.02] transition overflow-hidden flex flex-col"
+      className="relative bg-background rounded-lg shadow hover:shadow-lg transform hover:scale-[1.02] transition overflow-hidden flex flex-col"
     >
       {firstImage ? (
         <div className="relative">
@@ -64,7 +64,7 @@ export default function PropertyCard({ property }: Props) {
             alt={property.title}
             className="h-48 w-full object-cover"
           />
-          <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent text-white p-2 text-sm">
+          <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent text-background p-sm text-sm">
             <div className="font-semibold">
               {property.listing_type === 'rent'
                 ? `£${property.price.toLocaleString()}/mo`
@@ -76,23 +76,23 @@ export default function PropertyCard({ property }: Props) {
           </div>
         </div>
       ) : (
-        <div className="h-48 w-full bg-gray-200 flex items-center justify-center text-gray-400">
+        <div className="h-48 w-full bg-surface flex items-center justify-center text-secondary">
           No image
         </div>
       )}
-      <div className="p-4 flex-1 flex flex-col">
-        <h3 className="text-lg font-semibold mb-1 truncate">
+      <div className="p-md flex-1 flex flex-col">
+        <h3 className="text-lg font-semibold mb-xs truncate">
           {property.title}
         </h3>
-        <p className="text-sm text-gray-600 mb-2 truncate">
+        <p className="text-sm text-secondary mb-sm truncate">
           {property.city || property.address || '—'}
         </p>
         <div className="mt-auto flex items-center justify-end">
           {user && (
-            <div className="flex gap-2">
+            <div className="flex gap-sm">
               <button
                 onClick={handleToggle}
-                className="p-2 rounded-full hover:bg-gray-100"
+                className="p-sm rounded-full hover:bg-surface"
                 title={
                   isFavourited ? 'Remove from favourites' : 'Save to favourites'
                 }
@@ -109,7 +109,7 @@ export default function PropertyCard({ property }: Props) {
               </button>
               <button
                 onClick={handleCompare}
-                className="p-2 rounded-full hover:bg-gray-100"
+                className="p-sm rounded-full hover:bg-surface"
                 title={
                   inCompare ? 'Remove from comparison' : 'Add to comparison'
                 }

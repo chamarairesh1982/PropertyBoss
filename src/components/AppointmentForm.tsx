@@ -30,7 +30,7 @@ export default function AppointmentForm({ propertyId, agentId }: { propertyId: s
     return (
       <p>
         Please{' '}
-        <Link to="/login" className="text-blue-600 underline">
+        <Link to="/login" className="text-primary underline">
           sign in
         </Link>{' '}
         to request a viewing.
@@ -38,15 +38,15 @@ export default function AppointmentForm({ propertyId, agentId }: { propertyId: s
     );
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 max-w-md">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-sm max-w-md">
       <div>
-        <label htmlFor="timeslot" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="timeslot" className="block text-sm font-medium text-secondary">
           Select time
         </label>
         <input
           type="datetime-local"
           id="timeslot"
-          className="border rounded w-full p-2"
+          className="border rounded w-full p-sm"
           {...register('timeslot')}
         />
         {errors.timeslot && <p className="text-red-600 text-sm">Please choose a time</p>}
@@ -54,7 +54,7 @@ export default function AppointmentForm({ propertyId, agentId }: { propertyId: s
       <button
         type="submit"
         disabled={isSubmitting}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        className="bg-primary text-background px-md py-sm rounded hover:bg-primary/80 disabled:opacity-50"
       >
         {isSubmitting ? 'Requesting…' : 'Request viewing'}
       </button>

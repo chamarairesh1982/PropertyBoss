@@ -38,10 +38,10 @@ export default function PropertyFilter({ filters, onChange }: Props) {
   }
 
   return (
-    <form className="space-y-4 p-4 bg-white shadow rounded-lg mb-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <form className="space-y-md p-md bg-background shadow rounded-lg mb-md">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-md">
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="city">
+          <label className="block text-sm font-medium text-secondary" htmlFor="city">
             Location / City
           </label>
           <input
@@ -49,12 +49,12 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="city"
             value={filters.city ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
             placeholder="e.g. Sutton"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="minPrice">
+          <label className="block text-sm font-medium text-secondary" htmlFor="minPrice">
             Min price (£)
           </label>
           <input
@@ -63,13 +63,13 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="minPrice"
             value={filters.minPrice ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
             placeholder="0"
             min={0}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="maxPrice">
+          <label className="block text-sm font-medium text-secondary" htmlFor="maxPrice">
             Max price (£)
           </label>
           <input
@@ -78,13 +78,13 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="maxPrice"
             value={filters.maxPrice ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
             placeholder="any"
             min={0}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="bedrooms">
+          <label className="block text-sm font-medium text-secondary" htmlFor="bedrooms">
             Bedrooms
           </label>
           <input
@@ -93,12 +93,12 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="bedrooms"
             value={filters.bedrooms ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
             min={0}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="bathrooms">
+          <label className="block text-sm font-medium text-secondary" htmlFor="bathrooms">
             Bathrooms
           </label>
           <input
@@ -107,12 +107,12 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="bathrooms"
             value={filters.bathrooms ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
             min={0}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="propertyType">
+          <label className="block text-sm font-medium text-secondary" htmlFor="propertyType">
             Property type
           </label>
           <select
@@ -120,7 +120,7 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="propertyType"
             value={filters.propertyType ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
           >
             <option value="">Any</option>
             <option value="house">House</option>
@@ -130,7 +130,7 @@ export default function PropertyFilter({ filters, onChange }: Props) {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="listingType">
+          <label className="block text-sm font-medium text-secondary" htmlFor="listingType">
             Listing type
           </label>
           <select
@@ -138,28 +138,28 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="listingType"
             value={filters.listingType ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
           >
             <option value="">Any</option>
             <option value="sale">For Sale</option>
             <option value="rent">To Rent</option>
           </select>
         </div>
-        <div className="flex items-center space-x-2 mt-6">
+        <div className="flex items-center space-x-sm mt-6">
           <input
             type="checkbox"
             id="hasPhoto"
             name="hasPhoto"
             checked={filters.hasPhoto ?? false}
             onChange={(e) => onChange({ ...filters, hasPhoto: e.target.checked })}
-            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            className="h-4 w-4 text-primary focus:ring-primary border-surface rounded"
           />
-          <label htmlFor="hasPhoto" className="text-sm text-gray-700">
+          <label htmlFor="hasPhoto" className="text-sm text-secondary">
             Has photo
           </label>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="keywords">
+          <label className="block text-sm font-medium text-secondary" htmlFor="keywords">
             Keywords
           </label>
           <input
@@ -168,12 +168,12 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="keywords"
             value={filters.keywords ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
             placeholder="garden, parking..."
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="minFloorArea">
+          <label className="block text-sm font-medium text-secondary" htmlFor="minFloorArea">
             Min floor area (m²)
           </label>
           <input
@@ -182,12 +182,12 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="minFloorArea"
             value={filters.minFloorArea ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
             min={0}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="maxFloorArea">
+          <label className="block text-sm font-medium text-secondary" htmlFor="maxFloorArea">
             Max floor area (m²)
           </label>
           <input
@@ -196,12 +196,12 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="maxFloorArea"
             value={filters.maxFloorArea ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
             min={0}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="minAge">
+          <label className="block text-sm font-medium text-secondary" htmlFor="minAge">
             Min age (years)
           </label>
           <input
@@ -210,12 +210,12 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="minAge"
             value={filters.minAge ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
             min={0}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="maxAge">
+          <label className="block text-sm font-medium text-secondary" htmlFor="maxAge">
             Max age (years)
           </label>
           <input
@@ -224,12 +224,12 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="maxAge"
             value={filters.maxAge ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
             min={0}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="energyRating">
+          <label className="block text-sm font-medium text-secondary" htmlFor="energyRating">
             Energy rating
           </label>
           <input
@@ -238,11 +238,11 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="energyRating"
             value={filters.energyRating ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="tenure">
+          <label className="block text-sm font-medium text-secondary" htmlFor="tenure">
             Tenure
           </label>
           <select
@@ -250,7 +250,7 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="tenure"
             value={filters.tenure ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
           >
             <option value="">Any</option>
             <option value="freehold">Freehold</option>
@@ -258,7 +258,7 @@ export default function PropertyFilter({ filters, onChange }: Props) {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="postcode">
+          <label className="block text-sm font-medium text-secondary" htmlFor="postcode">
             Postcode
           </label>
           <input
@@ -267,11 +267,11 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="postcode"
             value={filters.postcode ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="radiusMiles">
+          <label className="block text-sm font-medium text-secondary" htmlFor="radiusMiles">
             Radius (miles)
           </label>
           <input
@@ -280,12 +280,12 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="radiusMiles"
             value={filters.radiusMiles ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
             min={0}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="addedSince">
+          <label className="block text-sm font-medium text-secondary" htmlFor="addedSince">
             Added since (days)
           </label>
           <input
@@ -294,7 +294,7 @@ export default function PropertyFilter({ filters, onChange }: Props) {
             name="addedSince"
             value={filters.addedSince ?? ''}
             onChange={handleInput}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            className="mt-xs block w-full rounded-md border-surface shadow-sm focus:border-primary focus:ring-primary text-sm"
             placeholder="7"
             min={0}
           />
