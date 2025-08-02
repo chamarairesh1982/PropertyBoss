@@ -21,6 +21,7 @@ import {
 } from '../hooks/useFavoriteLists';
 import { useComparison } from '../hooks/useComparison';
 import { sanitizeHtml } from '../lib/sanitizeHtml';
+import MortgageCalculator from '../components/MortgageCalculator';
 
 interface RouteParams {
   id: string;
@@ -169,12 +170,21 @@ export default function PropertyDetailPage() {
         <h2 className="text-2xl font-bold">{property.title}</h2>
         <p className="text-gray-600">
           {property.address}, {property.city} {property.postcode}
+          {property.postcode && (
+            <Link
+              to={`/areas/${encodeURIComponent(property.postcode)}`}
+              className="text-blue-600 underline ml-2"
+            >
+              View area guide
+            </Link>
+          )}
         </p>
         <div className="text-xl font-semibold text-blue-600">
           {property.listing_type === 'rent'
             ? `£${property.price.toLocaleString()}/mo`
             : `£${property.price.toLocaleString()}`}
         </div>
+        <MortgageCalculator price={property.price} />
         <div className="text-gray-700">
           {property.bedrooms} bedrooms · {property.bathrooms} bathrooms ·{' '}
           {property.property_type}
