@@ -80,11 +80,18 @@ export default function PropertyDetailPage() {
     const form = e.currentTarget;
     const formData = new FormData(form);
     const content = formData.get('message')?.toString() ?? '';
-    if (content.trim().length === 0 || !user || !property) return;
+    if (
+      content.trim().length === 0 ||
+      !user ||
+      !property ||
+      !property.agent?.id
+    ) {
+      return;
+    }
     sendMessage.mutate({
       propertyId: property.id,
       senderId: user.id,
-      receiverId: property.agent?.id ?? '',
+      receiverId: property.agent.id,
       content,
     });
     form.reset();
@@ -288,42 +295,46 @@ export default function PropertyDetailPage() {
       {/* Contact form */}
       <div>
         <h3 className="text-lg font-semibold mb-2">Contact agent</h3>
-        {user ? (
-          <form onSubmit={handleSubmit} className="space-y-2 max-w-md">
-            <label htmlFor="message" className="block text-sm font-medium">
-              Your message
-            </label>
-            <textarea
-              id="message"
-              name="message"
-              className="w-full h-32 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Write a message to the agent..."
-              required
-            />
-            <button
-              type="submit"
-              disabled={sendMessage.isLoading}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
-            >
-              {sendMessage.isLoading ? 'Sending…' : 'Send message'}
-            </button>
-            {sendMessage.isError && (
-              <p className="text-red-600 text-sm">
-                {(sendMessage.error as Error).message}
-              </p>
-            )}
-            {sendMessage.isSuccess && (
-              <p className="text-green-700 text-sm">Message sent!</p>
-            )}
-          </form>
+        {property.agent ? (
+          user ? (
+            <form onSubmit={handleSubmit} className="space-y-2 max-w-md">
+              <label htmlFor="message" className="block text-sm font-medium">
+                Your message
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                className="w-full h-32 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Write a message to the agent..."
+                required
+              />
+              <button
+                type="submit"
+                disabled={sendMessage.isLoading}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {sendMessage.isLoading ? 'Sending…' : 'Send message'}
+              </button>
+              {sendMessage.isError && (
+                <p className="text-red-600 text-sm">
+                  {(sendMessage.error as Error).message}
+                </p>
+              )}
+              {sendMessage.isSuccess && (
+                <p className="text-green-700 text-sm">Message sent!</p>
+              )}
+            </form>
+          ) : (
+            <p>
+              Please{' '}
+              <Link to="/login" className="text-blue-600 underline">
+                sign in
+              </Link>{' '}
+              to contact the agent.
+            </p>
+          )
         ) : (
-          <p>
-            Please{' '}
-            <Link to="/login" className="text-blue-600 underline">
-              sign in
-            </Link>{' '}
-            to contact the agent.
-          </p>
+          <p>No agent information available for this property.</p>
         )}
       </div>
       <AppointmentForm
