@@ -62,19 +62,16 @@ export function useSendMessage() {
       receiverId: string;
       content: string;
     }) => {
-      const res = await fetch('/functions/v1/enquiry', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      const { error } = await supabase.functions.invoke('enquiry', {
+        body: {
           propertyId,
           senderId,
           receiverId,
           content,
-        }),
+        },
       });
-      const result = await res.json();
-      if (!res.ok) {
-        throw new Error(result.error ?? 'Failed to send message');
+      if (error) {
+        throw new Error(error.message ?? 'Failed to send message');
       }
     },
   );
