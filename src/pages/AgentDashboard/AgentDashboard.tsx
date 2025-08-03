@@ -1,10 +1,9 @@
-import { Link, Routes, Route, useNavigate } from 'react-router-dom';
+import { Link, Routes, Route } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import PropertyForm from './PropertyForm';
 import Messages from './Messages';
 import Appointments from './Appointments';
-import { useListingStats } from '../../hooks/useListingStats';
-import { useAgentProperties } from '../../hooks/useAgentProperties';
+import Listings from './Listings';
 
 /**
  * The agent dashboard allows estate agents to manage their listings and
@@ -14,9 +13,6 @@ import { useAgentProperties } from '../../hooks/useAgentProperties';
  */
 export default function AgentDashboard() {
   const { user } = useAuth();
-  const navigate = useNavigate();
-  const { data: stats } = useListingStats();
-  const { data: properties, isLoading, error } = useAgentProperties();
 
   // Only agents are allowed access
   if (!user || user.role !== 'agent') {
@@ -46,52 +42,7 @@ export default function AgentDashboard() {
         </Link>
       </nav>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <div>
-              {isLoading && <p>Loading your properties…</p>}
-              {error && <p className="text-red-600">Error: {error.message}</p>}
-              {properties && properties.length > 0 ? (
-                <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-                  {properties.map((p) => (
-                    <div
-                      key={p.id}
-                      className="bg-white rounded shadow p-4 flex flex-col"
-                    >
-                      <div className="font-semibold mb-2">{p.title}</div>
-                      <div className="text-sm text-gray-600 mb-4">
-                        £{p.price.toLocaleString()}{' '}
-                        {p.listing_type === 'rent' ? '/mo' : ''}
-                      </div>
-                      {stats && (
-                        <div className="text-xs text-gray-500 mb-2">
-                          views:{' '}
-                          {stats.find((s) => s.property_id === p.id)?.views ??
-                            0}
-                          , enquiries:{' '}
-                          {stats.find((s) => s.property_id === p.id)
-                            ?.enquiries ?? 0}
-                          , favs:{' '}
-                          {stats.find((s) => s.property_id === p.id)
-                            ?.favorites ?? 0}
-                        </div>
-                      )}
-                      <button
-                        onClick={() => navigate(`edit/${p.id}`)}
-                        className="mt-auto text-blue-600 underline text-sm"
-                      >
-                        Edit
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p>You haven&apos;t listed any properties yet.</p>
-              )}
-            </div>
-          }
-        />
+        <Route path="/" element={<Listings />} />
         <Route path="new" element={<PropertyForm />} />
         <Route path="edit/:id" element={<PropertyForm />} />
         <Route path="messages" element={<Messages />} />
@@ -100,3 +51,4 @@ export default function AgentDashboard() {
     </div>
   );
 }
+
