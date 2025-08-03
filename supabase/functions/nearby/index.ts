@@ -1,18 +1,16 @@
 import { serve } from '../deno_std_http_server.ts';
 import { createClient } from '../supabase_client.ts';
 
-function corsHeaders() {
-  return {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-    'Access-Control-Allow-Headers':
-      'Content-Type, Authorization, apikey, x-client-info',
-  } as Record<string, string>;
-}
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+  'Access-Control-Allow-Headers':
+    'Content-Type, Authorization, apikey, x-client-info',
+} as Record<string, string>;
 
 serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders() });
+    return new Response('ok', { headers: corsHeaders });
   }
   const { lat, lon } = (await req.json()) as { lat: number; lon: number };
 
@@ -33,7 +31,7 @@ serve(async (req: Request) => {
 
   if (cached) {
     return new Response(JSON.stringify({ results: cached.results }), {
-      headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
     });
   }
 
@@ -58,6 +56,6 @@ serve(async (req: Request) => {
   });
 
   return new Response(JSON.stringify({ results }), {
-    headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+    headers: { 'Content-Type': 'application/json', ...corsHeaders },
   });
 });
