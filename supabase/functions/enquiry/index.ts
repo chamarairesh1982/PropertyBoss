@@ -1,6 +1,16 @@
 import { serve } from '../deno_std_http_server.ts';
 import { createClient } from '../supabase_client.ts';
 
+function corsHeaders(req: Request) {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers':
+      req.headers.get('access-control-request-headers') ??
+      'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  } as Record<string, string>;
+}
+
 async function incrementAttempt(
   supabase: ReturnType<typeof createClient>,
   identifier: string,
@@ -30,6 +40,9 @@ async function incrementAttempt(
 }
 
 serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders(req) });
+  }
   const { propertyId, senderId, receiverId, content } = (await req.json()) as {
     propertyId: string;
     senderId: string;
@@ -56,7 +69,7 @@ serve(async (req) => {
   if (rate.blocked) {
     return new Response(JSON.stringify({ error: 'Too many enquiries' }), {
       status: 429,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...corsHeaders(req) },
     });
   }
 
@@ -69,10 +82,10 @@ serve(async (req) => {
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 400,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...corsHeaders(req) },
     });
   }
   return new Response(JSON.stringify({ success: true }), {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...corsHeaders(req) },
   });
 });

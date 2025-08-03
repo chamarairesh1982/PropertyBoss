@@ -5,7 +5,20 @@ interface RequestBody {
   area: string;
 }
 
+function corsHeaders(req: Request) {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers':
+      req.headers.get('access-control-request-headers') ??
+      'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  } as Record<string, string>;
+}
+
 serve(async (req: Request) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders(req) });
+  }
   const { area } = (await req.json()) as RequestBody;
 
   const supabase = createClient(
@@ -25,7 +38,7 @@ serve(async (req: Request) => {
       1000 * 60 * 60 * 24
   ) {
     return new Response(JSON.stringify(cached.data), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...corsHeaders(req) },
     });
   }
 
@@ -83,6 +96,6 @@ serve(async (req: Request) => {
     .upsert({ area, data: result, updated_at: new Date().toISOString() });
 
   return new Response(JSON.stringify(result), {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...corsHeaders(req) },
   });
 });

@@ -62,27 +62,25 @@ export function useSendMessage() {
       receiverId: string;
       content: string;
     }) => {
-      const { data, error } = await supabase.functions.invoke('enquiry', {
+      const { error, response } = await supabase.functions.invoke('enquiry', {
         body: {
           propertyId,
           senderId,
           receiverId,
           content,
         },
-        noResolveJson: true,
       });
       if (error) {
-        throw new Error(error.message ?? 'Failed to send message');
-      }
-      const res = data as Response;
-      let result: { error?: string } | null = null;
-      try {
-        result = await res.json();
-      } catch {
-        // ignore JSON parse errors from empty responses
-      }
-      if (!res.ok) {
-        throw new Error(result?.error ?? 'Failed to send message');
+        let message = error.message ?? 'Failed to send message';
+        if (response) {
+          try {
+            const result = await response.json();
+            message = result?.error ?? message;
+          } catch {
+            // ignore JSON parse errors from empty responses
+          }
+        }
+        throw new Error(message);
       }
     },
   );
